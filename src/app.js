@@ -2,16 +2,28 @@ require('module-alias/register')
 
 const path = require('path')
 const express = require('express')
+const passport = require('passport')
 
 const cors = require('cors')
+const session = require('express-session')
 const cookieParser = require('cookie-parser')
 
-const corsConfig = require('./config/corsConfig.json')
+const { Strategy: GoogleStrategy } = require('passport-google-oauth20')
 
-const logger = require('./lib/logger')
-const models = require('./models/index')
+const corsConfig = require('@config/corsConfig.json')
 
-const indexRouter = require('./routes/index')
+const logger = require('@lib/logger')
+const envProvider = require('@lib/provider/envProvider')
+
+const models = require('@models/index')
+
+const indexRouter = require('@routes/index')
+
+const userDao = require('@dao/userDao')
+
+const UserReadRequestDTO = require('@userRequestDTO/userReadRequestDTO')
+const UserCreateRequestDTO = require('@userRequestDTO/userCreateRequestDTO')
+const UserReadResponseDTO = require('@userResponseDTO/userReadResponseDTO')
 
 const app = express()
 
@@ -35,6 +47,65 @@ models.sequelize
   .catch((err) => {
     logger.error('DB Connection fail', err)
   })
+
+app.use(
+  session({
+    secret: envProvider.session.secretKey,
+    resave: false,
+    saveUninitialized: false
+  })
+)
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: envProvider.mailer.gmailClientId,
+      clientSecret: envProvider.mailer.gmailClientSecret,
+      callbackURL: envProvider.google.callbackUrl
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const requestDTO = new UserReadRequestDTO({ email: profile.emails[0].value })
+        const responseDTO = await userDao.selectUser(requestDTO)
+        const readUserResponseDTO = new UserReadResponseDTO(responseDTO)
+
+        if (!responseDTO.id) {
+          const userCreateRequestDTO = new UserCreateRequestDTO({
+            email: profile.emails[0].value,
+            nickname: `shibaDog${new Date().getTime()}`,
+            password: profile.id,
+            isConfirm: true
+          })
+
+          const userResponseDTO = await userDao.insert(userCreateRequestDTO)
+
+          done(null, userResponseDTO)
+        }
+
+        done(null, readUserResponseDTO)
+      } catch (err) {
+        done(err, null)
+      }
+    }
+  )
+)
+
+passport.serializeUser((user, done) => {
+  done(null, user.id)
+})
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const requestDTO = new UserReadRequestDTO({ id })
+    const user = await userDao.selectInfo(requestDTO)
+    done(null, user)
+  } catch (err) {
+    done(err, null)
+  }
+})
 
 app.use(cors(corsConfig))
 app.use(express.json())

@@ -48,6 +48,7 @@ pipeline {
             steps {
                 script {
                     def modifiedContent
+                    def renewModifiedContent
                     def portValue = '3000'
                     def newDBValue = 'project-dev'
                     def envFilePath = '.env.server'
@@ -66,15 +67,10 @@ pipeline {
 
                     sh "cp ${envFilePath} ${envCopyFilePath}"
 
-                    modifiedContent = envFileContent.replaceAll(/PORT=.*/, "PORT=${portValue}")
-                    modifiedContent = branch == 'main' ? readFile(envCopyFilePath) : readFile(envCopyFilePath).replaceAll(/DB_DATABASE=.*/, "DB_DATABASE=${newDBValue}")
+                    modifiedContent = readFile(envCopyFilePath).replaceAll(/PORT=.*/, "PORT=${portValue}")
+                    renewModifiedContent = branch == 'main' ? modifiedContent : modifiedContent.replaceAll(/DB_DATABASE=.*/, "DB_DATABASE=${newDBValue}")
 
-                    writeFile(file: envCopyFilePath, text: modifiedContent)
-
-                    echo readFile(envCopyFilePath)
-                    echo envCopyFilePath
-
-                    writeFile(file: envCopyFilePath, text: modifiedContent)
+                    writeFile(file: envCopyFilePath, text: renewModifiedContent)
 
                     echo readFile(envCopyFilePath)
                     echo envCopyFilePath

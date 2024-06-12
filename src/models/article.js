@@ -62,6 +62,6 @@ module.exports = class Article extends Sequelize.Model {
   }
 
   static getIncludeAttributes() {
-    return ['id', 'title', 'content', 'images', 'hit', 'createdAt', 'updatedAt']
+    return ['id', 'title', 'content', 'hit', 'createdAt', 'updatedAt']
   }
 }

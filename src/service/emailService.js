@@ -81,9 +81,7 @@ const emailService = {
           emailDao.deleteForce(new VerifyRequestDTO({ verificationCode: dbData.verificationCode }))
 
         await superagent
-          .post(
-            `http://${envProvider.common.endPoint}:${envProvider.common.port}/api/emails/sendEmail`
-          )
+          .post(`http://localhost:${envProvider.common.port}/api/emails/sendEmail`)
           .send(userDTO)
 
         throw new Error(`emailService.checkCondition: 인증 코드가 유효하지 않습니다.`)

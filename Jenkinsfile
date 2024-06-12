@@ -51,17 +51,16 @@ pipeline {
                     def portValue = '3000'
                     def newDBValue = 'project-dev'
                     def envFilePath = '.env.server'
-                    def blueGreenState = envFileContent.split('\n').find { it.startsWith('BLUE_GREEN_STATE=') }?.split('=')[1]
 
                     if (branch == 'dev') {
-                        if (blueGreenState == 'blue') {
+                        if (env.BLUE_GREEN_STATE == 'blue') {
                             portValue = '3004'
                         } else  {
                             portValue = '3005'
                         }
                     } 
                     
-                    if (branch == 'main' && blueGreenState != 'blue') {
+                    if (branch == 'main' && env.BLUE_GREEN_STATE != 'blue') {
                         portValue = '3001'
                     }
 

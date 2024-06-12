@@ -48,12 +48,32 @@ pipeline {
             steps {
                 script {
                     def modifiedContent
+                    def portValue = '3000'
                     def newDBValue = 'project-dev'
                     def envFilePath = '.env.server'
+                    def blueGreenState = envFileContent.split('\n').find { it.startsWith('BLUE_GREEN_STATE=') }?.split('=')[1]
+
+                    if (branch == 'dev') {
+                        if (blueGreenState == 'blue') {
+                            portValue = '3004'
+                        } else  {
+                            portValue = '3005'
+                        }
+                    } 
+                    
+                    if (branch == 'main' && blueGreenState != 'blue') {
+                        portValue = '3001'
+                    }
 
                     sh "cp ${envFilePath} ${envCopyFilePath}"
 
+                    modifiedContent = envFileContent.replaceAll(/PORT=.*/, "PORT=${portValue}")
                     modifiedContent = branch == 'main' ? readFile(envCopyFilePath) : readFile(envCopyFilePath).replaceAll(/DB_DATABASE=.*/, "DB_DATABASE=${newDBValue}")
+
+                    writeFile(file: envCopyFilePath, text: modifiedContent)
+
+                    echo readFile(envCopyFilePath)
+                    echo envCopyFilePath
 
                     writeFile(file: envCopyFilePath, text: modifiedContent)
 

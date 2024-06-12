@@ -67,7 +67,7 @@ pipeline {
 
                     sh "cp ${envFilePath} ${envCopyFilePath}"
 
-                    modifiedContent = readFile(envCopyFilePath).replaceAll(/PORT=.*/, "PORT=${portValue}")
+                    modifiedContent = readFile(envCopyFilePath).replaceAll(/(?<=\b)PORT=.*/, "PORT=${portValue}")
                     renewModifiedContent = branch == 'main' ? modifiedContent : modifiedContent.replaceAll(/DB_DATABASE=.*/, "DB_DATABASE=${newDBValue}")
 
                     writeFile(file: envCopyFilePath, text: renewModifiedContent)

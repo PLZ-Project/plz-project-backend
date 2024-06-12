@@ -1,0 +1,4 @@
+{
+  "origin": "*",
+  "methods": ["OPTIONS", "GET", "POST", "HEAD", "PUT", "DELETE"]
+}

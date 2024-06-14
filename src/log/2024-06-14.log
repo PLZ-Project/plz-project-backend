@@ -1,0 +1,15 @@
+2024-06-14 09:31:33.230[info] app start
+2024-06-14 09:31:33.248[error] DB Connection fail getaddrinfo ENOTFOUND https://plz-project.site
+2024-06-14 09:33:28.076[info] app start
+2024-06-14 09:33:28.270[info] DB connection success
+2024-06-14 09:33:29.155[info] Sequelize sync success
+2024-06-14 09:36:22.387[info] app start
+2024-06-14 09:36:22.961[info] DB connection success
+2024-06-14 09:36:25.288[info] Sequelize sync success
+2024-06-14 09:37:36.211[info] app start
+2024-06-14 09:37:37.018[info] DB connection success
+2024-06-14 09:37:38.280[info] Sequelize sync success
+2024-06-14 09:37:58.582[error] OAuthLoginService.login: TypeError: Cannot read properties of undefined (reading 'toString')
+2024-06-14 09:38:57.686[info] app start
+2024-06-14 09:38:58.520[info] DB connection success
+2024-06-14 09:38:58.796[info] Sequelize sync success

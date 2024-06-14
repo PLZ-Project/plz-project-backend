@@ -20,6 +20,14 @@ exports.createUser = async (req, res) => {
 
     handleValidationError(requestDTO)
 
+    const confirmExitstedDTO = await superagent
+      .post(`${envProvider.common.endPoint}:${envProvider.common.port}/api/user/checkEmail`)
+      .send(requestDTO)
+
+    if (confirmExitstedDTO.body.isHasEmail) {
+      throw new Error('이미 존재하는 이메일입니다.')
+    }
+
     const responseDTO = await userService.reg(requestDTO)
 
     await superagent
@@ -62,6 +70,26 @@ exports.getUserByNickname = async (req, res) => {
     res.status(200).json(responseDTO)
   } catch (err) {
     logger.error(`router/user.js.info.error: ${err.message.toString()}`)
+    res.status(500).json({ err: err.message.toString() })
+  }
+}
+
+exports.checkEmail = async (req, res) => {
+  try {
+    const requestDTO = new UserReadRequestDTO({ ...req.body })
+
+    logger.info(`router/user.js.checkEmail.params: ${JSON.stringify(requestDTO)}`)
+
+    const responseDTO = (await userService.getEmailUser(requestDTO)).id
+      ? { isHasEmail: true }
+      : { isHasEmail: false }
+
+    logger.info(`router/user.js.checkEmail.result: ${JSON.stringify(responseDTO)}`)
+
+    res.status(200).json(responseDTO)
+  } catch (err) {
+    logger.error(`router/user.js.update.error: ${err.message.toString()}`)
+
     res.status(500).json({ err: err.message.toString() })
   }
 }
@@ -127,7 +155,7 @@ exports.deleteUser = async (req, res) => {
 
     logger.info(`router/user.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
-    await superagent.get(`http://localhost:${envProvider.common.port}/api/auth/logout`)
+    await superagent.get(`localhost:${envProvider.common.port}/api/auth/logout`)
 
     res.status(200).json(responseDTO)
   } catch (err) {
@@ -145,7 +173,7 @@ exports.deleteUserForce = async (req, res) => {
 
     logger.info(`router/user.js.delete.result) ${JSON.stringify(responseDTO)}`)
 
-    await superagent.get(`http://localhost:${envProvider.common.port}/api/auth/logout`)
+    await superagent.get(`localhost:${envProvider.common.port}/api/auth/logout`)
 
     res.status(200).json(responseDTO)
   } catch (err) {

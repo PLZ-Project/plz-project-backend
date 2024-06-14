@@ -25,8 +25,8 @@ exports.createCommunity = async (req, res) => {
     }
 
     req.body.userId = req.body.userId || req.tokenUser.id
-    req.body.thumbnailUrl = `http://${envProvider.common.endPoint}:${envProvider.common.port}${req.files.thumbnail[0].savedFilePath}`
-    req.body.backgroundUrl = `http://${envProvider.common.endPoint}:${envProvider.common.port}${req.files.background[0].savedFilePath}`
+    req.body.thumbnailUrl = `${envProvider.common.endPoint}:${envProvider.common.port}${req.files.thumbnail[0].savedFilePath}`
+    req.body.backgroundUrl = `${envProvider.common.endPoint}:${envProvider.common.port}${req.files.background[0].savedFilePath}`
 
     const requestDTO = new CommunityCreateRequestDTO(req.body)
 
@@ -65,11 +65,11 @@ exports.getCommunity = async (req, res) => {
 exports.modifyCommunity = async (req, res) => {
   try {
     if (req.files && req.files.thumbnail && req.files.thumbnail[0]) {
-      req.body.thumbnailUrl = `http://${envProvider.common.endPoint}:${envProvider.common.port}${req.files.thumbnail[0].savedFilePath}`
+      req.body.thumbnailUrl = `${envProvider.common.endPoint}:${envProvider.common.port}${req.files.thumbnail[0].savedFilePath}`
     }
 
     if (req.files && req.files.background && req.files.background[0].savedFilePath) {
-      req.body.backgroundUrl = `http://${envProvider.common.endPoint}:${envProvider.common.port}${req.files.background[0].savedFilePath}`
+      req.body.backgroundUrl = `${envProvider.common.endPoint}:${envProvider.common.port}${req.files.background[0].savedFilePath}`
     }
 
     const requestDTO = new CommunityUpdateRequestDTO({ ...req.body, ...req.params })

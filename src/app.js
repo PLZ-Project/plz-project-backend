@@ -10,8 +10,6 @@ const cookieParser = require('cookie-parser')
 
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20')
 
-const corsConfig = require('@config/corsConfig.json')
-
 const logger = require('@lib/logger')
 const envProvider = require('@lib/provider/envProvider')
 
@@ -107,7 +105,6 @@ passport.deserializeUser(async (id, done) => {
   }
 })
 
-app.use(cors(corsConfig))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())

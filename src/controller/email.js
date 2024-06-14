@@ -33,6 +33,7 @@ exports.verify = async (req, res) => {
 
     await superagent.put(
       `localhost:${envProvider.common.port}/api/user/updateIsConfirm/${verifyRequestDTO.userId}`
+      `http://${envProvider.common.endPoint}:${envProvider.common.port}/api/user/updateIsConfirm/${verifyRequestDTO.userId}`
     )
 
     const responseDTO = await emailService.deleteVerifyData(verifyRequestDTO)

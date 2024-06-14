@@ -1,5 +1,5 @@
 const cookieProvier = {
-  setTokensToCookie: (res, tokens) => {
+  setTokensToCookie: (res, tokens, payload) => {
     res.cookie('accessToken', tokens.accessToken, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: false,
@@ -8,6 +8,13 @@ const cookieProvier = {
     })
 
     res.cookie('refreshToken', tokens.refreshToken, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: false,
+      secure: false,
+      sameSite: false
+    })
+
+    res.cookie('userInfo', payload, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: false,
       secure: false,
@@ -33,6 +40,7 @@ const cookieProvier = {
   destroyTokenCookie: (res) => {
     res.clearCookie('accessToken')
     res.clearCookie('refreshToken')
+    res.clearCookie('userInfo')
   }
 }
 

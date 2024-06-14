@@ -6,6 +6,7 @@ const {
   createUser,
   getUserInfo,
   getUserByNickname,
+  checkEmail,
   modifyUserPw,
   modifyUserNickname,
   modifyUserIsConfirm,
@@ -20,6 +21,8 @@ router.post('/', createUser)
 router.get('/:id', getUserInfo)
 
 router.get('/nickname/:nickname', getUserByNickname)
+
+router.post('/checkEmail', checkEmail)
 
 router.put('/updatePw', isLoggedIn, modifyUserPw)
 

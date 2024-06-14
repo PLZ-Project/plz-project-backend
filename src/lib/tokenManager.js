@@ -15,7 +15,7 @@ const tokenManager = {
     await redisHelper.delRedisData(payload.id)
     await redisHelper.setRedisData(payload.id, tokens.refreshToken)
 
-    await cookieProvier.setTokensToCookie(res, tokens)
+    await cookieProvier.setTokensToCookie(res, tokens, payload)
   },
   makeAccessToken: async (user) => {
     const payload = jwtHelper.makePayload(user)
@@ -74,9 +74,11 @@ const tokenManager = {
       try {
         await tokenManager.validateAndGenerateAccessToken(req, res, refreshToken)
       } catch {
+        res.clearCookie('userInfo')
         return middlewareHelper.createError(res, 'Invalid AccessToken And RefreshToken', 403)
       }
     } else {
+      res.clearCookie('userInfo')
       return middlewareHelper.createError(res, 'Not Login User', 401)
     }
   },

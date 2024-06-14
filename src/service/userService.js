@@ -180,6 +180,25 @@ const userService = {
       resolve(responseDTO)
     })
   },
+  getEmailUser: async (requestDTO) => {
+    let responseDTO = null
+
+    try {
+      responseDTO = await userDao.selectUser(requestDTO)
+
+      logger.debug(`userService.delete: ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`userService.login: ${err.message.toString()}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
   login: async (res, requestDTO) => {
     const tokenresponseDTO = null
 

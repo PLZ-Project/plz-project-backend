@@ -72,6 +72,8 @@ const emailService = {
     return verificationCode
   },
   checkCondition: async (requestData, dbData, userDTO) => {
+    console.log('🚀 ~ checkCondition: ~ dbData:', dbData)
+    console.log('🚀 ~ checkCondition: ~ requestData:', requestData)
     try {
       if (
         !(dbData.id && dbData.userId && dbData.verificationCode) ||
@@ -81,7 +83,7 @@ const emailService = {
           emailDao.deleteForce(new VerifyRequestDTO({ verificationCode: dbData.verificationCode }))
 
         await superagent
-          .post(`${envProvider.common.endPoint}:${envProvider.common.port}/api/emails/sendEmail`)
+          .post(`${envProvider.common.endPoint}:${envProvider.common.port}/api/email/sendEmail`)
           .send(userDTO)
 
         throw new Error(`emailService.checkCondition: 인증 코드가 유효하지 않습니다.`)

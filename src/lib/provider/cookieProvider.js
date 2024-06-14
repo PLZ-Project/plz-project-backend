@@ -4,21 +4,21 @@ const cookieProvier = {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: false,
       secure: true,
-      sameSite: 'None'
+      sameSite: 'Lax'
     })
 
     res.cookie('refreshToken', tokens.refreshToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: false,
       secure: true,
-      sameSite: 'None'
+      sameSite: 'Lax'
     })
 
     res.cookie('userInfo', payload, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: false,
       secure: true,
-      sameSite: 'None'
+      sameSite: 'Lax'
     })
   },
   setAccessTokenToCookie: (res, token) => {
@@ -26,7 +26,7 @@ const cookieProvier = {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: false,
       secure: true,
-      sameSite: 'None'
+      sameSite: 'Lax'
     })
   },
   setRefreshTokenToCookie: (res, token) => {
@@ -34,7 +34,7 @@ const cookieProvier = {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: false,
       secure: true,
-      sameSite: 'None'
+      sameSite: 'Lax'
     })
   },
   destroyTokenCookie: (res) => {

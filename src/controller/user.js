@@ -155,7 +155,7 @@ exports.deleteUser = async (req, res) => {
 
     logger.info(`router/user.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
-    await superagent.get(`http://localhost:${envProvider.common.port}/api/auth/logout`)
+    await superagent.get(`localhost:${envProvider.common.port}/api/auth/logout`)
 
     res.status(200).json(responseDTO)
   } catch (err) {
@@ -173,7 +173,7 @@ exports.deleteUserForce = async (req, res) => {
 
     logger.info(`router/user.js.delete.result) ${JSON.stringify(responseDTO)}`)
 
-    await superagent.get(`http://localhost:${envProvider.common.port}/api/auth/logout`)
+    await superagent.get(`localhost:${envProvider.common.port}/api/auth/logout`)
 
     res.status(200).json(responseDTO)
   } catch (err) {

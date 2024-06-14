@@ -72,6 +72,8 @@ const emailService = {
     return verificationCode
   },
   checkCondition: async (requestData, dbData, userDTO) => {
+    console.log('🚀 ~ checkCondition: ~ dbData:', dbData)
+    console.log('🚀 ~ checkCondition: ~ requestData:', requestData)
     try {
       if (
         !(dbData.id && dbData.userId && dbData.verificationCode) ||

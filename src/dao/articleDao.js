@@ -1,4 +1,3 @@
-const { Op } = require('sequelize')
 const { Article, User, Board, Comment } = require('@models/index')
 
 const ArticleCreateResponseDTO = require('@articleResponseDTO/articleCreateResponseDTO')
@@ -53,7 +52,10 @@ const articleDao = {
         ]
       })
         .then((selectedInfo) => {
-          const articleReadResponseDTO = new ArticleReadResponseDTO(responseTokenDTO, selectedInfo)
+          const articleReadResponseDTO = new ArticleReadResponseDTO({
+            responseTokenDTO,
+            ...selectedInfo.dataValues
+          })
 
           resolve(articleReadResponseDTO)
         })

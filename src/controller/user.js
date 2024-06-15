@@ -156,7 +156,7 @@ exports.deleteUser = async (req, res) => {
     logger.info(`router/user.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
     await superagent
-      .get(`${envProvider.common.host}:${envProvider.common.port}/api/auth/logout`)
+      .get(`${envProvider.common.endPoint}:${envProvider.common.port}/api/auth/logout`)
       .set('access_token', req.headers.access_token)
       .set('refresh_token', req.headers.refresh_token)
       .set('Accept', 'application/json')

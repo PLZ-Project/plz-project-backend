@@ -1,21 +1,22 @@
 const jwt = require('jsonwebtoken')
 
 const envProvider = require('./provider/envProvider')
-const cookieProvier = require('./provider/cookieProvider')
 
 const jwtHelper = require('./helper/jwtHelper')
 const redisHelper = require('./helper/redisHelper')
 const middlewareHelper = require('./helper/middlewareHelper')
 
+const ResponseTokenDTO = require('@authResponseDTO/responseTokenDTO')
+
 const tokenManager = {
-  makeTokens: async (res, user) => {
+  makeTokens: async (user) => {
     const payload = jwtHelper.makePayload(user)
-    const tokens = jwtHelper.getTokens(payload)
+    const { accessToken, refreshToken } = jwtHelper.getTokens(payload)
 
     await redisHelper.delRedisData(payload.id)
-    await redisHelper.setRedisData(payload.id, tokens.refreshToken)
+    await redisHelper.setRedisData(payload.id, refreshToken)
 
-    await cookieProvier.setTokensToCookie(res, tokens, payload)
+    return { accessToken, refreshToken, userInfo: payload }
   },
   makeAccessToken: async (user) => {
     const payload = jwtHelper.makePayload(user)
@@ -47,62 +48,64 @@ const tokenManager = {
       return false
     }
   },
-  generateAndStoreRefreshToken: async (res, decodedToken) => {
+  generateAndStoreRefreshToken: async (decodedToken) => {
     const payload = jwtHelper.makePayload(decodedToken)
     const newRefreshToken = await tokenManager.makeNewRefreshToken(payload)
 
     await redisHelper.delRedisData(payload.id)
     await redisHelper.setRedisData(decodedToken.id, newRefreshToken)
 
-    cookieProvier.setRefreshTokenToCookie(res, newRefreshToken)
+    return newRefreshToken
   },
-  validateAndGenerateAccessToken: async (req, res, refreshToken) => {
+  validateAndGenerateAccessToken: async (req, refreshToken) => {
     const decodedRefreshToken = jwt.verify(refreshToken, envProvider.jwt.secretKey.refreshKey)
     const payload = jwtHelper.makePayload(decodedRefreshToken)
     const newAccessToken = await tokenManager.makeAccessToken(payload)
 
     if (await tokenManager.checkRefreshToken(payload.id, refreshToken)) {
-      cookieProvier.setAccessTokenToCookie(res, newAccessToken)
-    } else {
-      throw new Error()
+      req.tokenUser = decodedRefreshToken
+
+      return newAccessToken
+    }
+    throw new Error()
+  },
+  handleTokenError: async (req, res, err, refreshToken, next) => {
+    try {
+      if (refreshToken || err.name === 'TokenExpiredError') {
+        const newAccessToken = await tokenManager.validateAndGenerateAccessToken(req, refreshToken)
+
+        newAccessToken &&
+          (req.responseTokenDTO = new ResponseTokenDTO({ accessToken: newAccessToken }))
+      } else {
+        throw new Error(0)
+      }
+    } catch (error) {
+      req.tokenUser = null
+
+      return error.message === 0
+        ? middlewareHelper.createError(res, 'Not Login User', 401)
+        : middlewareHelper.createError(res, 'Invalid AccessToken And RefreshToken', 403)
     }
 
-    req.tokenUser = decodedRefreshToken
+    next()
   },
-  handleTokenError: async (req, res, err, refreshToken) => {
-    if (refreshToken && err.name === 'TokenExpiredError') {
-      try {
-        await tokenManager.validateAndGenerateAccessToken(req, res, refreshToken)
-      } catch {
-        res.clearCookie('userInfo')
-        return middlewareHelper.createError(res, 'Invalid AccessToken And RefreshToken', 403)
-      }
-    } else {
-      res.clearCookie('userInfo')
-      return middlewareHelper.createError(res, 'Not Login User', 401)
-    }
-  },
-  handleTokens: async (req, res, accessToken, refreshToken) => {
+  handleTokens: async (req, accessToken, refreshToken) => {
+    let newRefreshToken = null
+
     try {
       const decodedToken = jwt.verify(accessToken, envProvider.jwt.secretKey.accessKey)
       if (!refreshToken || !(await tokenManager.checkRefreshToken(decodedToken.id, refreshToken))) {
-        await tokenManager.generateAndStoreRefreshToken(res, decodedToken)
+        newRefreshToken = await tokenManager.generateAndStoreRefreshToken(decodedToken)
       }
+
       req.tokenUser = decodedToken
+      newRefreshToken &&
+        (req.responseTokenDTO = new ResponseTokenDTO({ refreshToken: newRefreshToken }))
     } catch (err) {
       return new Promise((resolve, reject) => {
         reject(err)
       })
     }
-  },
-  destroyTokens: async (req, res) => {
-    const payload = jwtHelper.makePayload(req.tokenUser)
-
-    await redisHelper.delRedisData(payload.id)
-
-    cookieProvier.destroyTokenCookie(res)
-
-    req.tokenUser = null
   }
 }
 

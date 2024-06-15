@@ -22,7 +22,7 @@ router.post(
     { name: 'thumbnail', maxCount: 1 },
     { name: 'background', maxCount: 1 }
   ]),
-  async (req, res, next) => {
+  async (req, res) => {
     try {
       if (
         !(
@@ -46,7 +46,7 @@ router.post(
 
       handleValidationError(requestDTO)
 
-      const responseDTO = await communityService.reg(requestDTO)
+      const responseDTO = await communityService.reg(req, requestDTO)
 
       logger.info(`router/community.js.reg.result: ${JSON.stringify(responseDTO)}`)
 
@@ -64,7 +64,7 @@ router.get('/:id', isLoggedIn, async (req, res) => {
 
     logger.info(`router/community.js.info.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await communityService.info(requestDTO)
+    const responseDTO = await communityService.info(req, requestDTO)
 
     logger.info(`router/community.js.info.result: ${JSON.stringify(responseDTO)}`)
 
@@ -96,7 +96,7 @@ router.put(
 
       logger.info(`router/community.js.update.params: ${JSON.stringify(requestDTO)}`)
 
-      const responseDTO = await communityService.edit(requestDTO)
+      const responseDTO = await communityService.edit(req, requestDTO)
 
       logger.info(`router/community.js.update.result: ${JSON.stringify(responseDTO)}`)
 
@@ -115,7 +115,7 @@ router.delete('/:id', isLoggedIn, async (req, res) => {
 
     logger.info(`router/community.js.delete.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await communityService.delete(requestDTO)
+    const responseDTO = await communityService.delete(req, requestDTO)
 
     logger.info(`router/community.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
@@ -131,7 +131,7 @@ router.delete('/force/:id', isLoggedIn, async (req, res) => {
 
     logger.info(`router/community.js.delete.params) ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await communityService.deleteForce(requestDTO)
+    const responseDTO = await communityService.deleteForce(req, requestDTO)
 
     logger.info(`router/community.js.delete.result) ${JSON.stringify(responseDTO)}`)
 

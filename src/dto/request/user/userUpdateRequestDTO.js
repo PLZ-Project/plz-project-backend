@@ -8,7 +8,7 @@ class UserUpdateRequestDTO {
   isConfirm
 
   constructor(data) {
-    this.id = data?.id
+    this.id = Number(data?.id)
     this.password = data?.password
     this.nickname = data?.nickname
     this.isConfirm = data?.isConfirm

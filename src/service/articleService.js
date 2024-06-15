@@ -4,11 +4,11 @@ const articleDao = require('@dao/articleDao')
 const articleUserLikeJoinDao = require('@dao/articleUserLikeJoinDao')
 
 const articleService = {
-  reg: async (requestDTO) => {
+  reg: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleDao.insert(requestDTO)
+      responseDTO = await articleDao.insert(req.responseTokenDTO, requestDTO)
 
       logger.debug(`articleService.reg : ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -24,11 +24,11 @@ const articleService = {
     })
   },
 
-  info: async (requestDTO) => {
+  info: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleDao.selectInfo(requestDTO)
+      responseDTO = await articleDao.selectInfo(req.responseTokenDTO, requestDTO)
 
       logger.debug(`articleService.info: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -44,11 +44,11 @@ const articleService = {
     })
   },
 
-  edit: async (requestDTO) => {
+  edit: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleDao.update(requestDTO)
+      responseDTO = await articleDao.update(req.responseTokenDTO, requestDTO)
 
       logger.debug(`articleService.edit: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -63,11 +63,11 @@ const articleService = {
       resolve(responseDTO)
     })
   },
-  delete: async (requestDTO) => {
+  delete: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleDao.delete(requestDTO)
+      responseDTO = await articleDao.delete(req.responseTokenDTO, requestDTO)
 
       logger.debug(`articleService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -82,11 +82,11 @@ const articleService = {
       resolve(responseDTO)
     })
   },
-  deleteForce: async (requestDTO) => {
+  deleteForce: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleDao.deleteForce(requestDTO)
+      responseDTO = await articleDao.deleteForce(req.responseTokenDTO, requestDTO)
 
       logger.debug(`articleService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -101,11 +101,11 @@ const articleService = {
       resolve(responseDTO)
     })
   },
-  regLike: async (requestDTO) => {
+  regLike: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleUserLikeJoinDao.insert(requestDTO)
+      responseDTO = await articleUserLikeJoinDao.insert(req.responseTokenDTO, requestDTO)
 
       logger.debug(`articleService.regLike : ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -119,11 +119,11 @@ const articleService = {
       resolve(responseDTO)
     })
   },
-  cancelLike: async (requestDTO) => {
+  cancelLike: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleUserLikeJoinDao.deleteForce(requestDTO)
+      responseDTO = await articleUserLikeJoinDao.deleteForce(req.responseTokenDTO, requestDTO)
 
       logger.debug(`articleService.reg : ${JSON.stringify(responseDTO)}`)
     } catch (err) {

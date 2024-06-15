@@ -26,6 +26,6 @@ router.delete('/force/:id', isLoggedIn, deleteArticleForce)
 
 router.post('/like/:id', isLoggedIn, createArticleLike)
 
-router.delete('/like/:id', deleteArticleLike)
+router.delete('/like/:id', isLoggedIn, deleteArticleLike)
 
 module.exports = router

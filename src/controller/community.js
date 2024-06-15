@@ -34,7 +34,7 @@ exports.createCommunity = async (req, res) => {
 
     handleValidationError(requestDTO)
 
-    const responseDTO = await communityService.reg(requestDTO)
+    const responseDTO = await communityService.reg(req, requestDTO)
 
     logger.info(`router/community.js.reg.result: ${JSON.stringify(responseDTO)}`)
 
@@ -51,7 +51,7 @@ exports.getCommunity = async (req, res) => {
 
     logger.info(`router/community.js.info.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await communityService.info(requestDTO)
+    const responseDTO = await communityService.info(req, requestDTO)
 
     logger.info(`router/community.js.info.result: ${JSON.stringify(responseDTO)}`)
 
@@ -76,7 +76,7 @@ exports.modifyCommunity = async (req, res) => {
 
     logger.info(`router/community.js.update.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await communityService.edit(requestDTO)
+    const responseDTO = await communityService.edit(req, requestDTO)
 
     logger.info(`router/community.js.update.result: ${JSON.stringify(responseDTO)}`)
 
@@ -94,7 +94,7 @@ exports.deleteCommunity = async (req, res) => {
 
     logger.info(`router/community.js.delete.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await communityService.delete(requestDTO)
+    const responseDTO = await communityService.delete(req, requestDTO)
 
     logger.info(`router/community.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
@@ -110,7 +110,7 @@ exports.deleteCommunityForce = async (req, res) => {
 
     logger.info(`router/community.js.delete.params) ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await communityService.deleteForce(requestDTO)
+    const responseDTO = await communityService.deleteForce(req, requestDTO)
 
     logger.info(`router/community.js.delete.result) ${JSON.stringify(responseDTO)}`)
 

@@ -1,10 +1,16 @@
+const LoginResponseDTO = require('@authResponseDTO/loginResponseDTO')
 const logger = require('@lib/logger')
 const tokenManager = require('@lib/tokenManager')
 
 const OAuthLoginService = {
-  login: async (res, requestDTO) => {
+  login: async (requestDTO) => {
+    let loginResult = null
+    let responseDTO = null
+
     try {
-      await tokenManager.makeTokens(res, requestDTO)
+      loginResult = await tokenManager.makeTokens(requestDTO)
+
+      responseDTO = new LoginResponseDTO(loginResult)
     } catch (err) {
       logger.error(`OAuthLoginService.login: ${err}`)
 
@@ -12,6 +18,10 @@ const OAuthLoginService = {
         reject(err)
       })
     }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
   }
 }
 

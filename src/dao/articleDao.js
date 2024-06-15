@@ -7,11 +7,14 @@ const ArticleUpdateResponseDTO = require('@articleResponseDTO/articleUpdateRespo
 const ArticleDeleteResponseDTO = require('@articleResponseDTO/articleDeleteResponseDTO')
 
 const articleDao = {
-  insert: (requestDTO) =>
+  insert: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Article.create(requestDTO)
         .then((inserted) => {
-          const articleCreateResponseDTO = new ArticleCreateResponseDTO(inserted)
+          const articleCreateResponseDTO = new ArticleCreateResponseDTO({
+            responseTokenDTO,
+            ...inserted.dataValues
+          })
 
           resolve(articleCreateResponseDTO)
         })
@@ -20,7 +23,7 @@ const articleDao = {
         })
     }),
 
-  selectInfo: (requestDTO) =>
+  selectInfo: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Article.findByPk(requestDTO.id, {
         include: [
@@ -50,7 +53,7 @@ const articleDao = {
         ]
       })
         .then((selectedInfo) => {
-          const articleReadResponseDTO = new ArticleReadResponseDTO(selectedInfo)
+          const articleReadResponseDTO = new ArticleReadResponseDTO(responseTokenDTO, selectedInfo)
 
           resolve(articleReadResponseDTO)
         })
@@ -58,13 +61,16 @@ const articleDao = {
           reject(err)
         })
     }),
-  update: (requestDTO) =>
+  update: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Article.update(requestDTO, {
         where: { id: requestDTO.id }
       })
         .then(([updated]) => {
-          const articleUpdateResponseDTO = new ArticleUpdateResponseDTO({ updated })
+          const articleUpdateResponseDTO = new ArticleUpdateResponseDTO({
+            responseTokenDTO,
+            updated
+          })
 
           resolve(articleUpdateResponseDTO)
         })
@@ -72,13 +78,16 @@ const articleDao = {
           reject(err)
         })
     }),
-  delete: (requestDTO) =>
+  delete: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Article.destroy({
         where: { id: requestDTO.id }
       })
         .then((deleted) => {
-          const ArticleDeleteResponeDTO = new ArticleDeleteResponseDTO({ deleted })
+          const ArticleDeleteResponeDTO = new ArticleDeleteResponseDTO({
+            responseTokenDTO,
+            deleted
+          })
 
           resolve(ArticleDeleteResponeDTO)
         })
@@ -86,14 +95,17 @@ const articleDao = {
           reject(err)
         })
     }),
-  deleteForce: (requestDTO) =>
+  deleteForce: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Article.destroy({
         where: { id: requestDTO.id },
         force: true
       })
         .then((deleted) => {
-          const ArticleDeleteResponeDTO = new ArticleDeleteResponseDTO({ deleted })
+          const ArticleDeleteResponeDTO = new ArticleDeleteResponseDTO({
+            responseTokenDTO,
+            deleted
+          })
 
           resolve(ArticleDeleteResponeDTO)
         })

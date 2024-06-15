@@ -85,13 +85,13 @@ const userDao = {
           reject(err)
         })
     }),
-  update: (requestDTO) =>
+  update: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       User.update(requestDTO, {
         where: { id: requestDTO.id }
       })
         .then(([updated]) => {
-          const userUpdateResponseDTO = new UserUpdateResponseDTO({ updated })
+          const userUpdateResponseDTO = new UserUpdateResponseDTO({ ...responseTokenDTO, updated })
 
           resolve(userUpdateResponseDTO)
         })
@@ -99,13 +99,13 @@ const userDao = {
           reject(err)
         })
     }),
-  delete: (requestDTO) =>
+  delete: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       User.destroy({
         where: { id: requestDTO.id }
       })
         .then((deleted) => {
-          const userDeleteResponeDTO = new UserDeleteResponseDTO({ deleted })
+          const userDeleteResponeDTO = new UserDeleteResponseDTO({ responseTokenDTO, deleted })
 
           resolve(userDeleteResponeDTO)
         })
@@ -113,14 +113,14 @@ const userDao = {
           reject(err)
         })
     }),
-  deleteForce: (requestDTO) =>
+  deleteForce: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       User.destroy({
         where: { id: requestDTO.id },
         force: true
       })
         .then((deleted) => {
-          const userDeleteResponeDTO = new UserDeleteResponseDTO({ deleted })
+          const userDeleteResponeDTO = new UserDeleteResponseDTO({ responseTokenDTO, deleted })
 
           resolve(userDeleteResponeDTO)
         })

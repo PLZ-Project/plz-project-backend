@@ -3,11 +3,11 @@ const logger = require('@lib/logger')
 const communityDao = require('@dao/communityDao')
 
 const communityService = {
-  reg: async (requestDTO) => {
+  reg: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await communityDao.insert(requestDTO)
+      responseDTO = await communityDao.insert(req.responseTokenDTO, requestDTO)
 
       logger.debug(`communityService.reg : ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -23,11 +23,11 @@ const communityService = {
     })
   },
 
-  info: async (requestDTO) => {
+  info: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await communityDao.selectInfo(requestDTO)
+      responseDTO = await communityDao.selectInfo(req.responseTokenDTO, requestDTO)
 
       logger.debug(`communityService.info: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -43,11 +43,11 @@ const communityService = {
     })
   },
 
-  edit: async (requestDTO) => {
+  edit: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await communityDao.update(requestDTO)
+      responseDTO = await communityDao.update(req.responseTokenDTO, requestDTO)
 
       logger.debug(`communityService.edit: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -62,11 +62,11 @@ const communityService = {
       resolve(responseDTO)
     })
   },
-  delete: async (requestDTO) => {
+  delete: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await communityDao.delete(requestDTO)
+      responseDTO = await communityDao.delete(req.responseTokenDTO, requestDTO)
 
       logger.debug(`communityService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -81,7 +81,7 @@ const communityService = {
       resolve(responseDTO)
     })
   },
-  deleteForce: async (requestDTO) => {
+  deleteForce: async (req, requestDTO) => {
     let responseDTO = null
 
     try {

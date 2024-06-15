@@ -17,7 +17,7 @@ exports.createBoard = async (req, res) => {
 
     handleValidationError(requestDTO)
 
-    const responseDTO = await boardService.reg(requestDTO)
+    const responseDTO = await boardService.reg(req, requestDTO)
 
     logger.info(`router/board.js.reg.result: ${JSON.stringify(responseDTO)}`)
 
@@ -34,7 +34,7 @@ exports.getBoard = async (req, res) => {
 
     logger.info(`router/board.js.info.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await boardService.info(requestDTO)
+    const responseDTO = await boardService.info(req, requestDTO)
 
     logger.info(`router/board.js.info.result: ${JSON.stringify(responseDTO)}`)
 
@@ -51,7 +51,7 @@ exports.modifyBoard = async (req, res) => {
 
     logger.info(`router/board.js.update.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await boardService.edit(requestDTO)
+    const responseDTO = await boardService.edit(req, requestDTO)
 
     logger.info(`router/board.js.update.result: ${JSON.stringify(responseDTO)}`)
 
@@ -69,7 +69,7 @@ exports.deleteBoard = async (req, res) => {
 
     logger.info(`router/board.js.delete.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await boardService.delete(requestDTO)
+    const responseDTO = await boardService.delete(req, requestDTO)
 
     logger.info(`router/board.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
@@ -85,7 +85,7 @@ exports.deleteBoardForce = async (req, res) => {
 
     logger.info(`router/board.js.delete.params) ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await boardService.deleteForce(requestDTO)
+    const responseDTO = await boardService.deleteForce(req, requestDTO)
 
     logger.info(`router/board.js.delete.result) ${JSON.stringify(responseDTO)}`)
 

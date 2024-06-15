@@ -40,7 +40,7 @@ module.exports = class User extends Sequelize.Model {
       foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'EmailVerification' }
     })
     db.User.hasMany(db.Community, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'Communities' }
+      foreignKey: { name: 'userId', as: 'Communities' }
     })
     db.User.hasMany(db.Board, {
       foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'Boards' }

@@ -7,11 +7,14 @@ const CommunityUpdateResponseDTO = require('@communityResponseDTO/communityUpdat
 const CommunityDeleteResponseDTO = require('@communityResponseDTO/communityDeleteResponseDTO')
 
 const communityDao = {
-  insert: (requestDTO) =>
+  insert: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Community.create(requestDTO)
         .then((inserted) => {
-          const communityCreateResponseDTO = new CommunityCreateResponseDTO(inserted)
+          const communityCreateResponseDTO = new CommunityCreateResponseDTO({
+            responseTokenDTO,
+            ...inserted.dataValues
+          })
 
           resolve(communityCreateResponseDTO)
         })
@@ -19,7 +22,7 @@ const communityDao = {
           reject(err)
         })
     }),
-  selectInfo: (requestDTO) =>
+  selectInfo: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Community.findByPk(requestDTO.id, {
         include: [
@@ -36,21 +39,30 @@ const communityDao = {
         ]
       })
         .then((selectedInfo) => {
-          const communityReadResponseDTO = new CommunityReadResponseDTO(selectedInfo)
-
-          resolve(communityReadResponseDTO)
+          if (selectedInfo) {
+            const communityReadResponseDTO = new CommunityReadResponseDTO({
+              responseTokenDTO,
+              ...selectedInfo.dataValues
+            })
+            resolve(communityReadResponseDTO)
+          } else {
+            reject(new Error('Community not found'))
+          }
         })
         .catch((err) => {
           reject(err)
         })
     }),
-  update: (requestDTO) =>
+  update: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Community.update(requestDTO, {
         where: { id: requestDTO.id }
       })
         .then(([updated]) => {
-          const communityUpdateResponseDTO = new CommunityUpdateResponseDTO({ updated })
+          const communityUpdateResponseDTO = new CommunityUpdateResponseDTO({
+            responseTokenDTO,
+            updated
+          })
 
           resolve(communityUpdateResponseDTO)
         })
@@ -58,13 +70,16 @@ const communityDao = {
           reject(err)
         })
     }),
-  delete: (requestDTO) =>
+  delete: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Community.destroy({
         where: { id: requestDTO.id }
       })
         .then((deleted) => {
-          const CommunityDeleteResponeDTO = new CommunityDeleteResponseDTO({ deleted })
+          const CommunityDeleteResponeDTO = new CommunityDeleteResponseDTO({
+            responseTokenDTO,
+            deleted
+          })
 
           resolve(CommunityDeleteResponeDTO)
         })
@@ -72,14 +87,17 @@ const communityDao = {
           reject(err)
         })
     }),
-  deleteForce: (requestDTO) =>
+  deleteForce: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Community.destroy({
         where: { id: requestDTO.id },
         force: true
       })
         .then((deleted) => {
-          const CommunityDeleteResponeDTO = new CommunityDeleteResponseDTO({ deleted })
+          const CommunityDeleteResponeDTO = new CommunityDeleteResponseDTO({
+            responseTokenDTO,
+            deleted
+          })
 
           resolve(CommunityDeleteResponeDTO)
         })

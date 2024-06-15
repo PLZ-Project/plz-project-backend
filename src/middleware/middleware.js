@@ -14,10 +14,11 @@ const middleware = {
     }
 
     try {
-      await tokenManager.handleTokens(req, res, accessToken, refreshToken)
+      await tokenManager.handleTokens(req, accessToken, refreshToken)
     } catch (err) {
-      return tokenManager.handleTokenError(req, res, err, refreshToken)
+      return tokenManager.handleTokenError(req, res, err, refreshToken, next)
     }
+
     next()
   }
 }

@@ -1,6 +1,10 @@
+const superagent = require('superagent')
+
 const logger = require('@lib/logger')
 
 const articleService = require('@service/articleService')
+
+const envProvider = require('@lib/provider/envProvider')
 
 const ArticleCreateRequestDTO = require('@articleRequestDTO/articleCreateRequestDTO')
 const ArticleReadRequestDTO = require('@articleRequestDTO/articleReadRequestDTO')
@@ -41,6 +45,15 @@ exports.getArticle = async (req, res) => {
 
     logger.info(`router/article.js.info.result: ${JSON.stringify(responseDTO)}`)
 
+    await superagent
+      .put(
+        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/${responseDTO.id}`
+      )
+      .set('access_token', req.headers.access_token)
+      .set('refresh_token', req.headers.refresh_token)
+      .set('Accept', 'application/json')
+      .send(responseDTO)
+
     res.status(200).json(responseDTO)
   } catch (err) {
     logger.error(`router/article.js.info.error: ${err.message.toString()}`)
@@ -50,15 +63,7 @@ exports.getArticle = async (req, res) => {
 
 exports.modifyArticle = async (req, res) => {
   try {
-    const articleReadRequestDTO = new ArticleReadRequestDTO(req.params)
-
-    const oldArticle = await articleService.info(req, articleReadRequestDTO)
-
-    const requestDTO = new ArticleUpdateRequestDTO({
-      ...req.body,
-      ...req.params,
-      hit: oldArticle.hit + 1
-    })
+    const requestDTO = new ArticleUpdateRequestDTO({ ...req.body, ...req.params })
 
     logger.info(`router/article.js.update.params: ${JSON.stringify(requestDTO)}`)
 
@@ -117,7 +122,7 @@ exports.createArticleLike = async (req, res) => {
 
     logger.info(`router/article.js ${{ reqParams: JSON.stringify(requestDTO) }}`)
 
-    const responseDTO = await articleService.regLike(requestDTO)
+    const responseDTO = await articleService.regLike(req, requestDTO)
     logger.info(`router/article.js.regLike.result: ${JSON.stringify(responseDTO)}`)
 
     res.status(200).json(responseDTO)
@@ -136,7 +141,7 @@ exports.deleteArticleLike = async (req, res) => {
 
     logger.info(`router/article.js ${{ requestDTO: JSON.stringify(requestDTO) }}`)
 
-    const responseDTO = await articleService.cancelLike(requestDTO)
+    const responseDTO = await articleService.cancelLike(req, requestDTO)
     logger.info(`router/article.js.deleteLike.result: ${JSON.stringify(responseDTO)}`)
 
     res.status(200).json(responseDTO)

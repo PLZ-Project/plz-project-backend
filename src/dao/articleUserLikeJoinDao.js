@@ -1,39 +1,54 @@
-const { Op } = require('sequelize')
 const { ArticleUserLikeJoin } = require('@models/index')
 
+const ArticleCreateResponseDTO = require('@articleResponseDTO/articleCreateResponseDTO')
+const ArticleDeleteResponseDTO = require('@articleResponseDTO/articleDeleteResponseDTO')
+
 const articleUserLikeJoinDao = {
-  insert(params) {
+  insert(responseTokenDTO, requestDTO) {
     return new Promise((resolve, reject) => {
-      ArticleUserLikeJoin.create(params)
+      ArticleUserLikeJoin.create(requestDTO)
         .then((inserted) => {
-          resolve(inserted)
+          const articleCreateResponseDTO = new ArticleCreateResponseDTO({
+            responseTokenDTO,
+            ...inserted.dataValues
+          })
+          resolve(articleCreateResponseDTO)
         })
         .catch((err) => {
           reject(err)
         })
     })
   },
-  delete(params) {
+  delete(responseTokenDTO, requestDTO) {
     return new Promise((resolve, reject) => {
       ArticleUserLikeJoin.destroy({
-        where: { articleId: params.articleId, userId: params.userId }
+        where: { articleId: requestDTO.articleId, userId: requestDTO.userId }
       })
         .then((deleted) => {
-          resolve({ deletedCount: deleted })
+          const articleDeleteResponseDTO = new ArticleDeleteResponseDTO({
+            responseTokenDTO,
+            deleted
+          })
+          resolve(articleDeleteResponseDTO)
         })
         .catch((err) => {
           reject(err)
         })
     })
   },
-  deleteForce(params) {
+  deleteForce(responseTokenDTO, requestDTO) {
     return new Promise((resolve, reject) => {
       ArticleUserLikeJoin.destroy({
-        where: { articleId: params.articleId, userId: params.userId },
+        where: { articleId: requestDTO.articleId, userId: requestDTO.userId },
         force: true
       })
         .then((deleted) => {
-          resolve({ deletedCount: deleted })
+          const articleDeleteResponseDTO = new ArticleDeleteResponseDTO({
+            responseTokenDTO,
+            deleted
+          })
+
+          resolve({ articleDeleteResponseDTO })
         })
         .catch((err) => {
           reject(err)

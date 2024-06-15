@@ -26,10 +26,10 @@ class ArticleReadResponseDTO {
     this.title = data?.title
     this.content = data?.content
     this.images = data?.images
-    this.hit = data?.hit
+    this.hit = data.hit !== undefined ? data.hit + 1 : 0
     this.likeUserList = data?.Likes
     this.commentList = data?.Comments
-    this.responseToken = data?.responseToken
+    this.responseToken = data?.responseTokenDTO
   }
 }
 

@@ -125,9 +125,9 @@ const articleService = {
     try {
       responseDTO = await articleUserLikeJoinDao.deleteForce(req.responseTokenDTO, requestDTO)
 
-      logger.debug(`articleService.reg : ${JSON.stringify(responseDTO)}`)
+      logger.debug(`articleService.cancel : ${JSON.stringify(responseDTO)}`)
     } catch (err) {
-      logger.error(`articleService.reg: ${err}`)
+      logger.error(`articleService.cancel: ${err}`)
       return new Promise((resolve, reject) => {
         reject(err)
       })

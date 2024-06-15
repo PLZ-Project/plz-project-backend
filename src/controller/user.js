@@ -100,7 +100,7 @@ exports.modifyUserPw = async (req, res) => {
 
     logger.info(`router/user.js.update.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await userService.editPassword(requestDTO)
+    const responseDTO = await userService.editPassword(req, requestDTO)
 
     logger.info(`router/user.js.update.result: ${JSON.stringify(responseDTO)}`)
 
@@ -118,7 +118,7 @@ exports.modifyUserNickname = async (req, res) => {
 
     logger.info(`router/user.js.update.params: ${JSON.stringify(requestDTO)}`)
 
-    const result = await userService.editNickname(requestDTO)
+    const result = await userService.editNickname(req, requestDTO)
     logger.info(`router/user.js.update.result: ${JSON.stringify(result)}`)
 
     res.status(200).json(result)
@@ -133,7 +133,7 @@ exports.modifyUserIsConfirm = async (req, res) => {
 
     logger.info(`router/user.js.update.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await userService.editIsConfirm(requestDTO)
+    const responseDTO = await userService.editIsConfirm(req, requestDTO)
 
     logger.info(`router/user.js.update.result: ${JSON.stringify(responseDTO)}`)
 
@@ -151,11 +151,15 @@ exports.deleteUser = async (req, res) => {
 
     logger.info(`router/user.js.delete.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await userService.delete(requestDTO)
+    const responseDTO = await userService.delete(req, requestDTO)
 
     logger.info(`router/user.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
-    await superagent.get(`localhost:${envProvider.common.port}/api/auth/logout`)
+    await superagent
+      .get(`${envProvider.common.host}:${envProvider.common.port}/api/auth/logout`)
+      .set('access_token', req.headers.access_token)
+      .set('refresh_token', req.headers.refresh_token)
+      .set('Accept', 'application/json')
 
     res.status(200).json(responseDTO)
   } catch (err) {
@@ -169,11 +173,15 @@ exports.deleteUserForce = async (req, res) => {
 
     logger.info(`router/user.js.delete.params) ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await userService.deleteForce(requestDTO)
+    const responseDTO = await userService.deleteForce(req, requestDTO)
 
     logger.info(`router/user.js.delete.result) ${JSON.stringify(responseDTO)}`)
 
-    await superagent.get(`localhost:${envProvider.common.port}/api/auth/logout`)
+    await superagent
+      .get(`${envProvider.common.host}:${envProvider.common.port}/api/auth/logout`)
+      .set('access_token', req.headers.access_token)
+      .set('refresh_token', req.headers.refresh_token)
+      .set('Accept', 'application/json')
 
     res.status(200).json(responseDTO)
   } catch (err) {

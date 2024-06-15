@@ -7,11 +7,14 @@ const BoardUpdateResponseDTO = require('@boardResponseDTO/boardUpdateResponseDTO
 const BoardDeleteResponseDTO = require('@boardResponseDTO/boardDeleteResponseDTO')
 
 const boardDao = {
-  insert: (requestDTO) =>
+  insert: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Board.create(requestDTO)
         .then((inserted) => {
-          const boardCreateResponseDTO = new BoardCreateResponseDTO(inserted)
+          const boardCreateResponseDTO = new BoardCreateResponseDTO({
+            responseTokenDTO,
+            ...inserted.dataValues
+          })
 
           resolve(boardCreateResponseDTO)
         })
@@ -20,7 +23,7 @@ const boardDao = {
         })
     }),
 
-  selectInfo: (requestDTO) =>
+  selectInfo: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Board.findByPk(requestDTO.id, {
         include: [
@@ -42,7 +45,10 @@ const boardDao = {
         ]
       })
         .then((selectedInfo) => {
-          const boardReadResponseDTO = new BoardReadResponseDTO(selectedInfo)
+          const boardReadResponseDTO = new BoardReadResponseDTO({
+            responseTokenDTO,
+            ...selectedInfo
+          })
 
           resolve(boardReadResponseDTO)
         })
@@ -50,13 +56,13 @@ const boardDao = {
           reject(err)
         })
     }),
-  update: (requestDTO) =>
+  update: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Board.update(requestDTO, {
         where: { id: requestDTO.id }
       })
         .then(([updated]) => {
-          const boardUpdateResponseDTO = new BoardUpdateResponseDTO({ updated })
+          const boardUpdateResponseDTO = new BoardUpdateResponseDTO({ responseTokenDTO, updated })
 
           resolve(boardUpdateResponseDTO)
         })
@@ -64,13 +70,13 @@ const boardDao = {
           reject(err)
         })
     }),
-  delete: (requestDTO) =>
+  delete: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Board.destroy({
         where: { id: requestDTO.id }
       })
         .then((deleted) => {
-          const BoardDeleteResponeDTO = new BoardDeleteResponseDTO({ deleted })
+          const BoardDeleteResponeDTO = new BoardDeleteResponseDTO({ responseTokenDTO, deleted })
 
           resolve(BoardDeleteResponeDTO)
         })
@@ -78,7 +84,7 @@ const boardDao = {
           reject(err)
         })
     }),
-  deleteForce: (requestDTO) =>
+  deleteForce: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Board.destroy({
         where: { id: requestDTO.id },

@@ -5,11 +5,15 @@ class CommunityReadResponseDTO {
 
   user
 
+  userId
+
   boardList
 
   thumbnailUrl
 
   backgroundUrl
+
+  responseToken
 
   constructor(data) {
     this.id = data?.id
@@ -18,6 +22,7 @@ class CommunityReadResponseDTO {
     this.boardList = data?.Boards
     this.thumbnailUrl = data?.thumbnailUrl
     this.backgroundUrl = data?.backgroundUrl
+    this.responseToken = data?.responseTokenDTO
   }
 }
 

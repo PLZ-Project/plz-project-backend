@@ -3,11 +3,11 @@ const logger = require('@lib/logger')
 const boardDao = require('@dao/boardDao')
 
 const boardService = {
-  reg: async (requestDTO) => {
+  reg: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await boardDao.insert(requestDTO)
+      responseDTO = await boardDao.insert(req.responseTokenDTO, requestDTO)
 
       logger.debug(`boardService.reg : ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -23,11 +23,11 @@ const boardService = {
     })
   },
 
-  info: async (requestDTO) => {
+  info: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await boardDao.selectInfo(requestDTO)
+      responseDTO = await boardDao.selectInfo(req.responseTokenDTO, requestDTO)
 
       logger.debug(`boardService.info: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -43,11 +43,11 @@ const boardService = {
     })
   },
 
-  edit: async (requestDTO) => {
+  edit: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await boardDao.update(requestDTO)
+      responseDTO = await boardDao.update(req.responseTokenDTO, requestDTO)
 
       logger.debug(`boardService.edit: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -62,11 +62,11 @@ const boardService = {
       resolve(responseDTO)
     })
   },
-  delete: async (requestDTO) => {
+  delete: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await boardDao.delete(requestDTO)
+      responseDTO = await boardDao.delete(req.responseTokenDTO, requestDTO)
 
       logger.debug(`boardService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -81,11 +81,11 @@ const boardService = {
       resolve(responseDTO)
     })
   },
-  deleteForce: async (requestDTO) => {
+  deleteForce: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await boardDao.deleteForce(requestDTO)
+      responseDTO = await boardDao.deleteForce(req.responseTokenDTO, requestDTO)
 
       logger.debug(`boardService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {

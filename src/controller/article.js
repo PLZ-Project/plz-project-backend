@@ -7,8 +7,8 @@ const ArticleReadRequestDTO = require('@articleRequestDTO/articleReadRequestDTO'
 const ArticleUpdateRequestDTO = require('@articleRequestDTO/articleUpdateRequestDTO')
 const ArticleDeleteRequestDTO = require('@articleRequestDTO/articleDeleteRequestDTO')
 
-const ArticleLikeCreateRequestDTO = require('@likeRequestDTO/articleLikeCreateRequestDTO')
-const ArticleLikeDeleteRequestDTO = require('@likeRequestDTO/articleLikeDeleteRequestDTO')
+const ArticleLikeCreateRequestDTO = require('@articleRequestDTO/articleLikeCreateRequestDTO')
+const ArticleLikeDeleteRequestDTO = require('@articleRequestDTO/articleLikeDeleteRequestDTO')
 
 const { handleValidationError } = require('@helper/mvcHelper')
 
@@ -20,7 +20,7 @@ exports.createArticle = async (req, res) => {
 
     handleValidationError(requestDTO)
 
-    const responseDTO = await articleService.reg(requestDTO)
+    const responseDTO = await articleService.reg(req, requestDTO)
 
     logger.info(`router/article.js.reg.result: ${JSON.stringify(responseDTO)}`)
 
@@ -37,7 +37,7 @@ exports.getArticle = async (req, res) => {
 
     logger.info(`router/article.js.info.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await articleService.info(requestDTO)
+    const responseDTO = await articleService.info(req, requestDTO)
 
     logger.info(`router/article.js.info.result: ${JSON.stringify(responseDTO)}`)
 
@@ -50,7 +50,9 @@ exports.getArticle = async (req, res) => {
 
 exports.modifyArticle = async (req, res) => {
   try {
-    const oldArticle = await articleService.getArticle({ id: req.body.id })
+    const articleReadRequestDTO = new ArticleReadRequestDTO(req.params)
+
+    const oldArticle = await articleService.info(req, articleReadRequestDTO)
 
     const requestDTO = new ArticleUpdateRequestDTO({
       ...req.body,
@@ -60,7 +62,7 @@ exports.modifyArticle = async (req, res) => {
 
     logger.info(`router/article.js.update.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await articleService.edit(requestDTO)
+    const responseDTO = await articleService.edit(req, requestDTO)
 
     logger.info(`router/article.js.update.result: ${JSON.stringify(responseDTO)}`)
 
@@ -78,7 +80,7 @@ exports.deleteArticle = async (req, res) => {
 
     logger.info(`router/article.js.delete.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await articleService.delete(requestDTO)
+    const responseDTO = await articleService.delete(req, requestDTO)
 
     logger.info(`router/article.js.delete.result: ${JSON.stringify(responseDTO)}`)
 
@@ -94,7 +96,7 @@ exports.deleteArticleForce = async (req, res) => {
 
     logger.info(`router/article.js.delete.params) ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await articleService.deleteForce(requestDTO)
+    const responseDTO = await articleService.deleteForce(req, requestDTO)
 
     logger.info(`router/article.js.delete.result) ${JSON.stringify(responseDTO)}`)
 
@@ -129,7 +131,7 @@ exports.deleteArticleLike = async (req, res) => {
   try {
     const requestDTO = new ArticleLikeDeleteRequestDTO({
       userId: req.tokenUser.id,
-      postId: req.params.id
+      articleId: req.params.id
     })
 
     logger.info(`router/article.js ${{ requestDTO: JSON.stringify(requestDTO) }}`)

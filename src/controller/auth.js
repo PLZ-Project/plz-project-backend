@@ -6,7 +6,6 @@ const userService = require('@service/userService')
 const OAuthLoginService = require('@service/OAuthLoginService')
 
 const LoginRequestDTO = require('@authRequestDTO/loginRequestDTO')
-const LoginResponseDTO = require('@authResponseDTO/loginResponseDTO')
 
 const { handleValidationError } = require('@helper/mvcHelper')
 
@@ -18,13 +17,11 @@ exports.login = async (req, res) => {
 
     handleValidationError(loginRequestDTO)
 
-    await userService.login(res, loginRequestDTO)
+    const responseDTO = await userService.login(loginRequestDTO)
 
-    const loginResponseDTO = new LoginResponseDTO({ isSuccess: true })
+    logger.info(`router/auth.js.result: ${JSON.stringify(responseDTO)}`)
 
-    logger.info(`router/auth.js.result: ${JSON.stringify(loginResponseDTO)}`)
-
-    res.status(200).json(loginResponseDTO)
+    res.status(200).json(responseDTO)
   } catch (err) {
     logger.error(`router/auth.js.error: ${err.message.toString()}`)
 
@@ -34,7 +31,9 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    await userService.logout(req, res)
+    req.tokenUser = null
+    req.newAccessToken && (req.newAccessToken = null)
+    req.newRefreshToken && (req.newRefreshToken = null)
 
     res.status(200).json({ isSuccess: true })
   } catch (err) {
@@ -53,9 +52,9 @@ exports.googleLoginCallback = (req, res) => {
         throw new Error(error)
       }
 
-      await OAuthLoginService.login(res, user)
+      const responseDTO = await OAuthLoginService.login(user)
 
-      res.status(200).json({ isSuccess: true })
+      res.status(200).json(responseDTO)
     } catch (err) {
       logger.error(`router/auth.js.error: ${err.message.toString()}`)
 

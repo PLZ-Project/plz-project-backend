@@ -4,6 +4,8 @@ const tokenManager = require('@lib/tokenManager')
 
 const userDao = require('@dao/userDao')
 
+const LoginResponseDTO = require('@authResponseDTO/loginResponseDTO')
+
 const userService = {
   reg: async (requestDTO) => {
     let responseDTO = null
@@ -77,7 +79,7 @@ const userService = {
       resolve(responseDTO)
     })
   },
-  editPassword: async (requestDTO) => {
+  editPassword: async (req, requestDTO) => {
     let responseDTO = null
     let hashPassword = null
 
@@ -89,7 +91,7 @@ const userService = {
 
       requestDTO.password = hashPassword
 
-      responseDTO = await userDao.update(requestDTO)
+      responseDTO = await userDao.update(req.responseTokenDTO, requestDTO)
 
       logger.debug(`userService.edit: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -104,11 +106,11 @@ const userService = {
       resolve(responseDTO)
     })
   },
-  editNickname: async (requestDTO) => {
+  editNickname: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await userDao.update(requestDTO)
+      responseDTO = await userDao.update(req.responseTokenDTO, requestDTO)
 
       logger.debug(`userService.edit: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -123,11 +125,11 @@ const userService = {
       resolve(responseDTO)
     })
   },
-  editIsConfirm: async (requestDTO) => {
+  editIsConfirm: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await userDao.update(requestDTO)
+      responseDTO = await userDao.update(null, requestDTO)
 
       logger.debug(`userService.edit: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -142,11 +144,11 @@ const userService = {
       resolve(responseDTO)
     })
   },
-  delete: async (requestDTO) => {
+  delete: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await userDao.delete(requestDTO)
+      responseDTO = await userDao.delete(req.responseTokenDTO, requestDTO)
 
       logger.debug(`userService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -161,11 +163,11 @@ const userService = {
       resolve(responseDTO)
     })
   },
-  deleteForce: async (requestDTO) => {
+  deleteForce: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await userDao.deleteForce(requestDTO)
+      responseDTO = await userDao.deleteForce(req.responseTokenDTO, requestDTO)
 
       logger.debug(`userService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -199,8 +201,8 @@ const userService = {
       resolve(responseDTO)
     })
   },
-  login: async (res, requestDTO) => {
-    const tokenresponseDTO = null
+  login: async (requestDTO) => {
+    let tokenResponse = null
 
     let selectedUserInfo = null
 
@@ -222,7 +224,9 @@ const userService = {
         throw new Error('패스워드가 일치하지 않습니다.')
       }
 
-      await tokenManager.makeTokens(res, selectedUserInfo)
+      const loginRResult = await tokenManager.makeTokens(selectedUserInfo)
+
+      tokenResponse = new LoginResponseDTO(loginRResult)
     } catch (err) {
       logger.error(`userService.login: ${err.message.toString()}`)
 
@@ -232,21 +236,8 @@ const userService = {
     }
 
     return new Promise((resolve) => {
-      resolve(tokenresponseDTO)
+      resolve(tokenResponse)
     })
-  },
-  logout: async (req, res) => {
-    try {
-      await tokenManager.destroyTokens(req, res)
-
-      logger.debug(`authService.logout: 로그아웃 완료!!)`)
-    } catch (err) {
-      logger.error(`authService.logout: ${err.message.toString()}`)
-
-      return new Promise((resolve, reject) => {
-        reject(err)
-      })
-    }
   }
 }
 

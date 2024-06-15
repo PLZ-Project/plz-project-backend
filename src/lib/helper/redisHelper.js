@@ -15,7 +15,7 @@ const redisHelper = {
   },
   getRedisData: async (id) => {
     try {
-      const redisClient = await redisConnector.createRedisClient()
+      const redisClient = await redisConnector.createRedisConnector()
       const storedRefreshToken = await redisClient.get(id.toString())
 
       await redisConnector.shutdown(redisClient)

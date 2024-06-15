@@ -32,9 +32,7 @@ module.exports = class Community extends Sequelize.Model {
   }
 
   static associate(db) {
-    db.Community.belongsTo(db.User, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'User' }
-    })
+    db.Community.belongsTo(db.User, { foreignKey: 'userId', as: 'User' })
     db.Community.hasMany(db.Board, {
       foreignKey: { name: 'communityId', onDelete: 'CASCADE', as: 'Boards' }
     })

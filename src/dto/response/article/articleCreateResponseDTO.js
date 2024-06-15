@@ -13,6 +13,8 @@ class ArticleCreateResponseDTO {
 
   hit
 
+  responseToken
+
   constructor(data) {
     this.id = data?.id
     this.userId = data?.userId
@@ -21,6 +23,7 @@ class ArticleCreateResponseDTO {
     this.content = data?.content
     this.images = data?.images
     this.hit = data?.hit
+    this.responseToken = data?.responseTokenDTO
   }
 }
 

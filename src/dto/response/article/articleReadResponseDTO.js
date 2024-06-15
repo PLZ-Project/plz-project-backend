@@ -17,6 +17,8 @@ class ArticleReadResponseDTO {
 
   commentList
 
+  responseToken
+
   constructor(data) {
     this.id = data?.id
     this.user = data?.User
@@ -27,6 +29,7 @@ class ArticleReadResponseDTO {
     this.hit = data?.hit
     this.likeUserList = data?.Likes
     this.commentList = data?.Comments
+    this.responseToken = data?.responseToken
   }
 }
 

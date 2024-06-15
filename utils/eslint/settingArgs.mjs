@@ -22,6 +22,7 @@ const settingArgs = {
     '@stylistic/js': stylisticJs
   },
   rules: {
+    'dot-notation': 0,
     'comma-dangle': 0,
     'import/order': 0,
     'no-param-reassign': 0,

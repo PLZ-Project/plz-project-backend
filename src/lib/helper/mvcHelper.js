@@ -1,6 +1,12 @@
+const superagent = require('superagent')
+
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
+
+const envProvider = require('@lib/provider/envProvider')
+
+const TagNotificationCreateRequestDTO = require('@notificationRequestDTO/tagNotificationCreateRequestDTO')
 
 const mvcHelper = {
   handleValidationError: (params) => {
@@ -10,12 +16,54 @@ const mvcHelper = {
       }
     })
   },
-  parseTaggedUsers: (commentContent) => {
+  parseTaggedUsers: async (req) => {
+    const parsedList = []
     const regex = /@([^\s]+)/g
-    const matchedUsers = commentContent.match(regex)
-    const taggedUsers = matchedUsers.map((user) => user.substring(1))
+    const matchedUsers = req.body.content.match(regex)
+    const taggedUsers = matchedUsers != null ? matchedUsers.map((user) => user.substring(1)) : []
 
-    return taggedUsers
+    for (const nickname of taggedUsers) {
+      try {
+        const user = await superagent
+          .get(
+            `${envProvider.common.endPoint}:${envProvider.common.port}/api/user/nickname/${nickname}`
+          )
+          .then((response) => JSON.parse(response.text))
+
+        if (req.body.id && user) {
+          const taggedUser = await superagent
+            .get(
+              `${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/getTaggedNotify/${user.id}`
+            )
+            .then((response) => JSON.parse(response.text))
+
+          if (
+            Object.keys(taggedUser).length === 0 ||
+            taggedUser.commentId !== Number(req.body.id)
+          ) {
+            parsedList.push(
+              new TagNotificationCreateRequestDTO({
+                userId: req.tokenUser.id,
+                targetId: user.id,
+                commentId: Number(req.body.id)
+              })
+            )
+          }
+        } else {
+          parsedList.push(
+            new TagNotificationCreateRequestDTO({
+              userId: req.tokenUser.id,
+              targetId: user.id,
+              commentId: Number(req.body.id)
+            })
+          )
+        }
+      } catch (err) {
+        throw new Error(err)
+      }
+    }
+
+    return parsedList
   },
   upload: multer({
     storage: multer.diskStorage({

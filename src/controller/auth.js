@@ -28,7 +28,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.logout = async (req, res) => {
   try {
     req.tokenUser = null
@@ -42,9 +41,7 @@ exports.logout = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] })
-
 exports.googleLoginCallback = (req, res) => {
   passport.authenticate('google', async (error, user) => {
     try {
@@ -56,9 +53,9 @@ exports.googleLoginCallback = (req, res) => {
 
       res.status(200).json(responseDTO)
     } catch (err) {
-      logger.error(`router/auth.js.error: ${err.message.toString()}`)
+      logger.error(`router/auth.js.error: ${err.message}`)
 
-      res.status(500).json({ err: err.message.toString() })
+      res.status(500).json({ err: err.message })
     }
   })(req, res)
 }

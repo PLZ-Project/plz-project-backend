@@ -6,6 +6,8 @@ const UserReadResponseDTO = require('@userResponseDTO/userReadResponseDTO')
 const UserUpdateResponseDTO = require('@userResponseDTO/userUpdateResponseDTO')
 const UserDeleteResponseDTO = require('@userResponseDTO/userDeleteResponseDTO')
 
+const UserReadNicknameListResponseDTO = require('@userResponseDTO/userReadNicknameListResponseDTO')
+
 const userDao = {
   insert: (requestDTO) =>
     new Promise((resolve, reject) => {
@@ -59,7 +61,7 @@ const userDao = {
   selectInfoByNickname: (requestDTO) =>
     new Promise((resolve, reject) => {
       User.findOne({
-        where: [{ nickname: requestDTO.nickname }],
+        where: { nickname: requestDTO.nickname },
         attributes: { exclude: ['password'] }
       })
         .then((selectedInfo) => {
@@ -71,6 +73,33 @@ const userDao = {
           reject(err)
         })
     }),
+  selectInfosByNickname: (requestDTO) => {
+    const setQuery = {}
+
+    setQuery.where = {
+      ...setQuery.where,
+      nickname: { [Op.iLike]: `%${requestDTO.nickname}%` }
+    }
+
+    return new Promise((resolve, reject) => {
+      User.findAll({
+        ...setQuery,
+        attributes: ['id']
+      })
+        .then((selectedInfo) => {
+          const idArray = selectedInfo.map((user) => user.id)
+
+          const userReadNicknameListResponseDTO = new UserReadNicknameListResponseDTO({
+            ids: idArray
+          })
+
+          resolve(userReadNicknameListResponseDTO)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  },
   selectUser: (requestDTO) =>
     new Promise((resolve, reject) => {
       User.findOne({

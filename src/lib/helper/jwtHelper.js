@@ -11,9 +11,7 @@ const jwtHelper = {
   }),
   getTokens: (payload) => {
     const accessToken = jwtHelper.getToken(payload, 'access')
-    console.log('🚀 ~ accessToken:', accessToken)
     const refreshToken = jwtHelper.getToken(payload, 'refresh')
-    console.log('🚀 ~ refreshToken:', refreshToken)
 
     return { accessToken, refreshToken }
   },

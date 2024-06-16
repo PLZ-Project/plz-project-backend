@@ -6,6 +6,7 @@ const { isLoggedIn } = require('@middleware/middleware')
 
 const {
   createCommunity,
+  getList,
   getCommunity,
   modifyCommunity,
   deleteCommunity,
@@ -23,6 +24,8 @@ router.post(
   ]),
   createCommunity
 )
+
+router.get('/list', getList)
 
 router.get('/:id', isLoggedIn, getCommunity)
 

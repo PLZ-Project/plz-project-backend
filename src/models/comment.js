@@ -29,16 +29,25 @@ module.exports = class Comment extends Sequelize.Model {
 
   static associate(db) {
     db.Comment.belongsTo(db.User, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'User' }
+      foreignKey: {
+        foreignKey: 'userId',
+        onDelete: 'CASCADE',
+        as: 'user'
+      }
     })
     db.Comment.belongsTo(db.Article, {
-      foreignKey: { name: 'articleId', onDelete: 'CASCADE', as: 'User' }
+      foreignKey: {
+        foreignKey: 'articleId',
+        onDelete: 'CASCADE',
+        as: 'article'
+      }
     })
-    db.Comment.belongsToMany(db.User, {
-      through: db.TagNotification,
-      foreignKey: 'commentId',
-      otherKey: 'userId',
-      as: 'TagUserList'
+    db.Comment.hasMany(db.TagNotification, {
+      foreignKey: {
+        foreignKey: 'commentId',
+        onDelete: 'CASCADE',
+        as: 'tagNotifications'
+      }
     })
   }
 

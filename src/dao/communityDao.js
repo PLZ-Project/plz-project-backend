@@ -22,6 +22,57 @@ const communityDao = {
           reject(err)
         })
     }),
+  selectList: (requestDTO) => {
+    const setQuery = {}
+
+    if (requestDTO.searchType === 'author') {
+      setQuery.where = {
+        ...setQuery.where,
+        userId: requestDTO.authorIds
+      }
+    }
+
+    if (requestDTO.searchType === 'name') {
+      setQuery.where = {
+        ...setQuery.where,
+        name: { [Op.iLike]: `%${requestDTO.keyword}%` }
+      }
+    }
+
+    if (requestDTO.limit) {
+      setQuery.limit = requestDTO.limit
+    }
+
+    if (requestDTO.page) {
+      setQuery.offset = (requestDTO.page - 1) * requestDTO.limit
+    }
+
+    return new Promise((resolve, reject) => {
+      setQuery.order = [['id', 'DESC']]
+
+      Community.findAndCountAll({
+        ...setQuery,
+        include: [
+          {
+            model: User,
+            as: 'User',
+            attributes: User.getIncludeAttributes()
+          },
+          {
+            model: Board,
+            as: 'Boards',
+            attributes: Board.getIncludeAttributes()
+          }
+        ]
+      })
+        .then((selectedList) => {
+          resolve(selectedList)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  },
   selectInfo: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Community.findByPk(requestDTO.id, {

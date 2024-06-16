@@ -22,8 +22,70 @@ const boardDao = {
           reject(err)
         })
     }),
+  selectList: (requestDTO) => {
+    const setQuery = {}
 
-  selectInfo: (responseTokenDTO, requestDTO) =>
+    if (requestDTO.communityId) {
+      setQuery.where = {
+        ...setQuery.where,
+        communityId: requestDTO.communityId
+      }
+    }
+
+    if (requestDTO.searchType === 'author') {
+      setQuery.where = {
+        ...setQuery.where,
+        userId: requestDTO.authorIds
+      }
+    }
+
+    if (requestDTO.searchType === 'name') {
+      setQuery.where = {
+        ...setQuery.where,
+        name: { [Op.iLike]: `%${requestDTO.keyword}%` }
+      }
+    }
+
+    if (requestDTO.limit) {
+      setQuery.limit = requestDTO.limit
+    }
+
+    if (requestDTO.page) {
+      setQuery.offset = (requestDTO.page - 1) * requestDTO.limit
+    }
+
+    setQuery.order = [['id', 'DESC']]
+
+    return new Promise((resolve, reject) => {
+      Board.findAndCountAll({
+        ...setQuery,
+        include: [
+          {
+            model: User,
+            as: 'User',
+            attributes: User.getIncludeAttributes()
+          },
+          {
+            model: Community,
+            as: 'Community',
+            attributes: Community.getIncludeAttributes()
+          },
+          {
+            model: Article,
+            as: 'Articles',
+            attributes: Article.getIncludeAttributes()
+          }
+        ]
+      })
+        .then((selectedList) => {
+          resolve(selectedList)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  },
+  selectInfo: (requestDTO) =>
     new Promise((resolve, reject) => {
       Board.findByPk(requestDTO.id, {
         include: [
@@ -45,10 +107,7 @@ const boardDao = {
         ]
       })
         .then((selectedInfo) => {
-          const boardReadResponseDTO = new BoardReadResponseDTO({
-            responseTokenDTO,
-            ...selectedInfo
-          })
+          const boardReadResponseDTO = new BoardReadResponseDTO({ ...selectedInfo })
 
           resolve(boardReadResponseDTO)
         })

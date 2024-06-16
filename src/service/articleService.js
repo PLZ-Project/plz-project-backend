@@ -1,7 +1,18 @@
+const { Client } = require('@elastic/elasticsearch')
+
 const logger = require('@lib/logger')
+const envProvider = require('@lib/provider/envProvider')
+
+const { parseShould, parseBody } = require('@helper/mvcHelper')
 
 const articleDao = require('@dao/articleDao')
 const articleUserLikeJoinDao = require('@dao/articleUserLikeJoinDao')
+
+const client = new Client({
+  node: `http://${envProvider.common.host}:${envProvider.elasticSearch.port}`
+})
+
+const ArticleSearchResponseDTO = require('@articleResponseDTO/articleSearchResponseDTO')
 
 const articleService = {
   reg: async (req, requestDTO) => {
@@ -23,7 +34,24 @@ const articleService = {
       resolve(responseDTO)
     })
   },
+  searchArticle: async (requestDTO) => {
+    let responseDTO = null
 
+    try {
+      responseDTO = articleDao.selectList(requestDTO)
+
+      logger.debug(`articleService.list: ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`articleService.list: ${err.message.toString()}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
   info: async (req, requestDTO) => {
     let responseDTO = null
 
@@ -43,7 +71,6 @@ const articleService = {
       resolve(responseDTO)
     })
   },
-
   edit: async (req, requestDTO) => {
     let responseDTO = null
 

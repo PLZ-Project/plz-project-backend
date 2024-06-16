@@ -11,6 +11,8 @@ const ArticleReadRequestDTO = require('@articleRequestDTO/articleReadRequestDTO'
 const ArticleUpdateRequestDTO = require('@articleRequestDTO/articleUpdateRequestDTO')
 const ArticleDeleteRequestDTO = require('@articleRequestDTO/articleDeleteRequestDTO')
 
+const ArticleSearchRequestDTO = require('@articleRequestDTO/articleSearchRequestDTO')
+
 const ArticleLikeCreateRequestDTO = require('@articleRequestDTO/articleLikeCreateRequestDTO')
 const ArticleLikeDeleteRequestDTO = require('@articleRequestDTO/articleLikeDeleteRequestDTO')
 
@@ -34,7 +36,32 @@ exports.createArticle = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
+exports.searchArticle = async (req, res) => {
+  try {
+    const idArrayResponseDTO =
+      req.query.searchType === 'author' &&
+      (await superagent
+        .get(`${envProvider.common.endPoint}:${envProvider.common.port}/api/user/getUsers/nickname`)
+        .set('access_token', req.headers.access_token)
+        .set('refresh_token', req.headers.refresh_token)
+        .set('Accept', 'application/json')
+        .query(req.query)
+        .send())
 
+    const requestDTO = idArrayResponseDTO
+      ? new ArticleSearchRequestDTO({
+          ...req.query,
+          authorIds: idArrayResponseDTO.body.ids
+        })
+      : new ArticleSearchRequestDTO(req.query)
+
+    const responseDTO = await articleService.searchArticle(requestDTO)
+
+    res.status(200).json(responseDTO)
+  } catch (err) {
+    res.status(500).json({ err: err.message.toString() })
+  }
+}
 exports.getArticle = async (req, res) => {
   try {
     const requestDTO = new ArticleReadRequestDTO(req.params)
@@ -60,7 +87,6 @@ exports.getArticle = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.modifyArticle = async (req, res) => {
   try {
     const requestDTO = new ArticleUpdateRequestDTO({ ...req.body, ...req.params })
@@ -78,7 +104,6 @@ exports.modifyArticle = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.deleteArticle = async (req, res) => {
   try {
     const requestDTO = new ArticleDeleteRequestDTO(req.params)
@@ -94,7 +119,6 @@ exports.deleteArticle = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.deleteArticleForce = async (req, res) => {
   try {
     const requestDTO = new ArticleDeleteRequestDTO(req.params)
@@ -110,7 +134,6 @@ exports.deleteArticleForce = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.createArticleLike = async (req, res) => {
   try {
     const requestDTO = new ArticleLikeCreateRequestDTO({
@@ -131,7 +154,6 @@ exports.createArticleLike = async (req, res) => {
     res.status(500).json({ err: err.toString() })
   }
 }
-
 exports.deleteArticleLike = async (req, res) => {
   try {
     const requestDTO = new ArticleLikeDeleteRequestDTO({

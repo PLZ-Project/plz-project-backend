@@ -1,6 +1,4 @@
 class BoardSearchRequestDTO {
-  id
-
   communityId
 
   authorIds
@@ -20,7 +18,7 @@ class BoardSearchRequestDTO {
     this.keyword = data?.keyword
     this.searchType = data?.searchType
     this.page = data?.page ? Number(data.page) : 1
-    this.limit = data?.limit ? Number(data.limit) : 3
+    this.limit = data?.limit ? Number(data.limit) : 8
   }
 }
 

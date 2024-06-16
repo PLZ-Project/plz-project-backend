@@ -1,8 +1,8 @@
 const tokenManager = require('@lib/tokenManager')
 const middlewareHelper = require('@helper/middlewareHelper')
 
-const getAccessToken = (req) => req.headers?.access_token
-const getRefreshToken = (req) => req.headers?.refresh_token
+const getAccessToken = (req) => req.headers?.accesstoken
+const getRefreshToken = (req) => req.headers?.refreshtoken
 
 const middleware = {
   async isLoggedIn(req, res, next) {

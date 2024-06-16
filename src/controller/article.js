@@ -42,8 +42,8 @@ exports.searchArticle = async (req, res) => {
       req.query.searchType === 'author' &&
       (await superagent
         .get(`${envProvider.common.endPoint}:${envProvider.common.port}/api/user/getUsers/nickname`)
-        .set('access_token', req.headers.access_token)
-        .set('refresh_token', req.headers.refresh_token)
+        .set('accesstoken', req.headers.accesstoken)
+        .set('refreshtoken', req.headers.refreshtoken)
         .set('Accept', 'application/json')
         .query(req.query)
         .send())
@@ -76,8 +76,8 @@ exports.getArticle = async (req, res) => {
       .put(
         `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/${responseDTO.id}`
       )
-      .set('access_token', req.headers.access_token)
-      .set('refresh_token', req.headers.refresh_token)
+      .set('accesstoken', req.headers.accesstoken)
+      .set('refreshtoken', req.headers.refreshtoken)
       .set('Accept', 'application/json')
       .send(responseDTO)
 

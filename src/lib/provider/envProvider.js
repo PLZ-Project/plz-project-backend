@@ -21,9 +21,6 @@ const envProvider = {
   redis: {
     port: process.env.REDIS_PORT
   },
-  elasticSearch: {
-    port: process.env.ELASTIC_PORT
-  },
   hash: {
     iterations: Number(process.env.CRPYTO_ITERATIONS)
   },

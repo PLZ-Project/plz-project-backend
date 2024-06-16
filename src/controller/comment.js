@@ -25,8 +25,8 @@ exports.createComment = async (req, res) => {
 
     await superagent
       .post(`${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/comment`)
-      .set('access_token', req.headers.access_token)
-      .set('refresh_token', req.headers.refresh_token)
+      .set('accesstoken', req.headers.accesstoken)
+      .set('refreshtoken', req.headers.refreshtoken)
       .set('Accept', 'application/json')
       .send({ ...responseDTO, articleId: req.body.articleId })
 
@@ -66,8 +66,8 @@ exports.modifyComment = async (req, res) => {
       .post(
         `${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/resendComment`
       )
-      .set('access_token', req.headers.access_token)
-      .set('refresh_token', req.headers.refresh_token)
+      .set('accesstoken', req.headers.accesstoken)
+      .set('refreshtoken', req.headers.refreshtoken)
       .set('Accept', 'application/json')
       .send(requestDTO)
 

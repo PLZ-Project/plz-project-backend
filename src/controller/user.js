@@ -166,8 +166,8 @@ exports.deleteUser = async (req, res) => {
 
     await superagent
       .get(`${envProvider.common.endPoint}:${envProvider.common.port}/api/auth/logout`)
-      .set('access_token', req.headers.access_token)
-      .set('refresh_token', req.headers.refresh_token)
+      .set('accesstoken', req.headers.accesstoken)
+      .set('refreshtoken', req.headers.refreshtoken)
       .set('Accept', 'application/json')
 
     res.status(200).json(responseDTO)
@@ -187,8 +187,8 @@ exports.deleteUserForce = async (req, res) => {
 
     await superagent
       .get(`${envProvider.common.host}:${envProvider.common.port}/api/auth/logout`)
-      .set('access_token', req.headers.access_token)
-      .set('refresh_token', req.headers.refresh_token)
+      .set('accesstoken', req.headers.accesstoken)
+      .set('refreshtoken', req.headers.refreshtoken)
       .set('Accept', 'application/json')
 
     res.status(200).json(responseDTO)

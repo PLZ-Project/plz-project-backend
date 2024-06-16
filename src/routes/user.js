@@ -6,6 +6,7 @@ const {
   createUser,
   getUserInfo,
   getUserByNickname,
+  getUsersByNickname,
   checkEmail,
   modifyUserPw,
   modifyUserNickname,
@@ -21,6 +22,8 @@ router.post('/', createUser)
 router.get('/:id', getUserInfo)
 
 router.get('/nickname/:nickname', getUserByNickname)
+
+router.get('/getUsers/nickname', getUsersByNickname)
 
 router.post('/checkEmail', checkEmail)
 

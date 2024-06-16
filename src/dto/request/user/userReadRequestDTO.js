@@ -8,7 +8,7 @@ class UserReadRequestDTO {
   constructor(data) {
     this.id = data?.id
     this.email = data?.email
-    this.nickname = data?.nickname
+    this.nickname = data?.nickname.length > 0 ? data?.nickname : null
   }
 }
 

@@ -24,7 +24,6 @@ exports.sendEmail = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.verify = async (req, res) => {
   try {
     const verifyRequestDTO = new VerifyRequestDTO(req.params)

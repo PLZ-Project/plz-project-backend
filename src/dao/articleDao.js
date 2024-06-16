@@ -1,3 +1,4 @@
+const { Op } = require('sequelize')
 const { Article, User, Board, Comment } = require('@models/index')
 
 const ArticleCreateResponseDTO = require('@articleResponseDTO/articleCreateResponseDTO')
@@ -21,7 +22,96 @@ const articleDao = {
           reject(err)
         })
     }),
+  selectList(requestDTO) {
+    const setQuery = {}
 
+    if (requestDTO.boardId) {
+      setQuery.where = {
+        ...setQuery.where,
+        boardId: requestDTO.boardId
+      }
+    }
+
+    if (requestDTO.searchType === 'title') {
+      setQuery.where = {
+        ...setQuery.where,
+        title: { [Op.iLike]: `%${requestDTO.keyword}%` }
+      }
+    }
+
+    if (requestDTO.searchType === 'content') {
+      setQuery.where = {
+        ...setQuery.where,
+        content: { [Op.iLike]: `%${requestDTO.keyword}%` }
+      }
+    }
+
+    if (requestDTO.searchType === 'title_content') {
+      setQuery.where = {
+        ...setQuery.where,
+        title: { [Op.iLike]: `%${requestDTO.keyword}%` }
+      }
+
+      setQuery.where = {
+        ...setQuery.where,
+        content: { [Op.iLike]: `%${requestDTO.keyword}%` }
+      }
+    }
+
+    if (requestDTO.searchType === 'author') {
+      setQuery.where = {
+        ...setQuery.where,
+        userId: requestDTO.authorIds
+      }
+    }
+
+    if (requestDTO.limit) {
+      setQuery.limit = requestDTO.limit
+    }
+
+    if (requestDTO.page) {
+      setQuery.offset = (requestDTO.page - 1) * requestDTO.limit
+    }
+
+    setQuery.order = [['id', 'DESC']]
+
+    return new Promise((resolve, reject) => {
+      Article.findAndCountAll({
+        ...setQuery,
+        include: [
+          {
+            model: User,
+            as: 'User',
+            attributes: User.getIncludeAttributes()
+          },
+          {
+            model: Board,
+            as: 'Board',
+            attributes: Board.getIncludeAttributes()
+          },
+          {
+            model: Comment,
+            as: 'Comments',
+            attributes: Comment.getIncludeAttributes()
+          },
+          {
+            model: User,
+            as: 'Likes',
+            attributes: User.getIncludeAttributes(),
+            through: {
+              attributes: []
+            }
+          }
+        ]
+      })
+        .then((selectedList) => {
+          resolve(selectedList)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  },
   selectInfo: (responseTokenDTO, requestDTO) =>
     new Promise((resolve, reject) => {
       Article.findByPk(requestDTO.id, {

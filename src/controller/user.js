@@ -42,7 +42,6 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.getUserInfo = async (req, res) => {
   try {
     const requestDTO = new UserReadRequestDTO(req.params)
@@ -73,7 +72,20 @@ exports.getUserByNickname = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
+exports.getUsersByNickname = async (req, res) => {
+  try {
+    const requestDTO = new UserReadRequestDTO({ nickname: req.query.keyword })
 
+    logger.info(`router/user.js.info.params: ${JSON.stringify(requestDTO)}`)
+
+    const responseDTO = await userService.infosByNickname(requestDTO)
+
+    res.status(200).json(responseDTO)
+  } catch (err) {
+    logger.error(`router/user.js.info.error: ${err.message.toString()}`)
+    res.status(500).json({ err: err.message.toString() })
+  }
+}
 exports.checkEmail = async (req, res) => {
   try {
     const requestDTO = new UserReadRequestDTO({ ...req.body })
@@ -93,7 +105,6 @@ exports.checkEmail = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.modifyUserPw = async (req, res) => {
   try {
     const requestDTO = new UserUpdateRequestDTO({ ...req.body, id: req.tokenUser.id })
@@ -111,7 +122,6 @@ exports.modifyUserPw = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.modifyUserNickname = async (req, res) => {
   try {
     const requestDTO = new UserUpdateRequestDTO({ ...req.body, id: req.tokenUser.id })
@@ -144,7 +154,6 @@ exports.modifyUserIsConfirm = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.deleteUser = async (req, res) => {
   try {
     const requestDTO = new UserDeleteRequestDTO({ id: req.tokenUser.id })
@@ -166,7 +175,6 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.deleteUserForce = async (req, res) => {
   try {
     const requestDTO = new UserDeleteRequestDTO({ id: req.tokenUser.id })

@@ -1,3 +1,5 @@
+const superagent = require('superagent')
+
 const logger = require('@lib/logger')
 const envProvider = require('@provider/envProvider')
 
@@ -7,6 +9,8 @@ const CommunityCreateRequestDTO = require('@communityRequestDTO/communityCreateR
 const CommunityReadRequestDTO = require('@communityRequestDTO/communityReadRequestDTO')
 const CommunityUpdateRequestDTO = require('@communityRequestDTO/communityUpdateRequestDTO')
 const CommunityDeleteRequestDTO = require('@communityRequestDTO/communityDeleteRequestDTO')
+
+const CommunitySearchRequestDTO = require('@communityRequestDTO/communitySearchRequestDTO')
 
 const { handleValidationError } = require('@helper/mvcHelper')
 
@@ -44,7 +48,37 @@ exports.createCommunity = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
+exports.getList = async (req, res) => {
+  try {
+    const idArrayResponseDTO =
+      req.query.searchType === 'author' &&
+      (await superagent
+        .get(`${envProvider.common.endPoint}:${envProvider.common.port}/api/user/getUsers/nickname`)
+        .set('access_token', req.headers.access_token)
+        .set('refresh_token', req.headers.refresh_token)
+        .set('Accept', 'application/json')
+        .query(req.query)
+        .send())
 
+    const requestDTO = idArrayResponseDTO
+      ? new CommunitySearchRequestDTO({
+          ...req.query,
+          authorIds: idArrayResponseDTO.body.ids
+        })
+      : new CommunitySearchRequestDTO(req.query)
+
+    logger.info(`router/board.js.list.params: ${JSON.stringify(requestDTO)}`)
+
+    const responseDTO = await communityService.list(requestDTO)
+
+    logger.info(`router/board.js.list.result: ${JSON.stringify(responseDTO)}`)
+
+    res.status(200).json(responseDTO)
+  } catch (err) {
+    logger.error(`router/board.js.list.error: ${err.message.toString()}`)
+    res.status(500).json({ err: err.message.toString() })
+  }
+}
 exports.getCommunity = async (req, res) => {
   try {
     const requestDTO = new CommunityReadRequestDTO(req.params)
@@ -61,7 +95,6 @@ exports.getCommunity = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.modifyCommunity = async (req, res) => {
   try {
     if (req.files && req.files.thumbnail && req.files.thumbnail[0]) {
@@ -87,7 +120,6 @@ exports.modifyCommunity = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.deleteCommunity = async (req, res) => {
   try {
     const requestDTO = new CommunityDeleteRequestDTO(req.params)

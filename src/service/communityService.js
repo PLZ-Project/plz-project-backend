@@ -22,7 +22,25 @@ const communityService = {
       resolve(responseDTO)
     })
   },
+  list: async (requestDTO) => {
+    let responseDTO = null
 
+    try {
+      responseDTO = await communityDao.selectList(requestDTO)
+
+      logger.debug(`communityService.list: ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`communityService.list: ${err.message.toString()}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
   info: async (req, requestDTO) => {
     let responseDTO = null
 
@@ -42,7 +60,6 @@ const communityService = {
       resolve(responseDTO)
     })
   },
-
   edit: async (req, requestDTO) => {
     let responseDTO = null
 

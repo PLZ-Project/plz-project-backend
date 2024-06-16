@@ -40,7 +40,6 @@ const userService = {
       resolve(responseDTO)
     })
   },
-
   info: async (requestDTO) => {
     let responseDTO = null
 
@@ -65,6 +64,25 @@ const userService = {
 
     try {
       responseDTO = await userDao.selectInfoByNickname(requestDTO)
+
+      logger.debug(`userService.info: ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`userService.info: ${err.message.toString()}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
+  infosByNickname: async (requestDTO) => {
+    let responseDTO = null
+
+    try {
+      responseDTO = await userDao.selectInfosByNickname(requestDTO)
 
       logger.debug(`userService.info: ${JSON.stringify(responseDTO)}`)
     } catch (err) {

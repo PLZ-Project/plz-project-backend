@@ -22,12 +22,30 @@ const boardService = {
       resolve(responseDTO)
     })
   },
+  list: async (requestDTO) => {
+    let responseDTO = null
 
+    try {
+      responseDTO = await boardDao.selectList(requestDTO)
+
+      logger.debug(`boardService.list: ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`boardService.list: ${err.message.toString()}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
   info: async (req, requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await boardDao.selectInfo(req.responseTokenDTO, requestDTO)
+      responseDTO = await boardDao.selectInfo(requestDTO)
 
       logger.debug(`boardService.info: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -42,7 +60,6 @@ const boardService = {
       resolve(responseDTO)
     })
   },
-
   edit: async (req, requestDTO) => {
     let responseDTO = null
 

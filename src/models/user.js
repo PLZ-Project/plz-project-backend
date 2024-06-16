@@ -37,41 +37,41 @@ module.exports = class User extends Sequelize.Model {
 
   static associate(db) {
     db.User.hasOne(db.EmailVerification, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'EmailVerification' }
+      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'emailVerification' }
     })
     db.User.hasMany(db.Community, {
-      foreignKey: { name: 'userId', as: 'Communities' }
+      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'communities' }
     })
     db.User.hasMany(db.Board, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'Boards' }
+      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'boards' }
     })
     db.User.hasMany(db.Article, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'Articles' }
+      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'articles' }
     })
     db.User.hasMany(db.Comment, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'Comments' }
+      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'comments' }
     })
-    db.User.hasOne(db.TagNotification, {
-      foreignKey: { name: 'targetId', onDelete: 'CASCADE', as: 'ReceivedTagNotification' },
-      as: 'TagNotifications2'
+
+    db.User.hasMany(db.TagNotification, {
+      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'createdTagNotifications' }
     })
+
+    db.User.hasMany(db.TagNotification, {
+      foreignKey: { name: 'targetId', onDelete: 'CASCADE', as: 'receivedTagNotifications' }
+    })
+
     db.User.belongsToMany(db.Article, {
       through: db.CommentNotification,
-      foreignKey: 'articleId',
-      otherKey: 'userId',
-      as: 'CommentNotifications'
-    })
-    db.User.belongsToMany(db.Comment, {
-      through: db.TagNotification,
       foreignKey: 'userId',
-      otherKey: 'commentId',
-      as: 'TagNotifications'
+      otherKey: 'articleId',
+      as: 'commentNotifications'
     })
+
     db.User.belongsToMany(db.Article, {
       through: db.ArticleUserLikeJoin,
       foreignKey: 'userId',
       otherKey: 'articleId',
-      as: 'LikeArticles'
+      as: 'likeArticles'
     })
   }
 

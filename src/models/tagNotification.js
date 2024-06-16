@@ -27,15 +27,40 @@ module.exports = class TagNotification extends Sequelize.Model {
         freezeTableName: true,
         underscored: true,
         timestamps: true,
-        paranoid: true
+        paranoid: true,
+        indexes: [
+          {
+            unique: true,
+            fields: ['comment_id', 'user_id', 'target_id']
+          }
+        ]
       }
     )
   }
 
   static associate(db) {
     db.TagNotification.belongsTo(db.User, {
-      foreignKey: { name: 'targetId', onDelete: 'CASCADE', as: 'targetUser' },
-      as: 'TagNotifications2'
+      foreignKey: {
+        name: 'userId',
+        onDelete: 'CASCADE',
+        as: 'creatorUser'
+      }
+    })
+
+    db.TagNotification.belongsTo(db.User, {
+      foreignKey: {
+        name: 'targetId',
+        onDelete: 'CASCADE',
+        as: 'targetUser'
+      }
+    })
+
+    db.TagNotification.belongsTo(db.Comment, {
+      foreignKey: {
+        name: 'commentId',
+        onDelete: 'CASCADE',
+        as: 'comment'
+      }
     })
   }
 }

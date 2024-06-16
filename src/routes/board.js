@@ -4,6 +4,7 @@ const { isLoggedIn } = require('@middleware/middleware')
 
 const {
   createBoard,
+  getList,
   getBoard,
   modifyBoard,
   deleteBoard,
@@ -14,7 +15,9 @@ const router = express.Router()
 
 router.post('/', isLoggedIn, createBoard)
 
-router.get('/:id', isLoggedIn, getBoard)
+router.get('/list', getList)
+
+router.get('/:id', getBoard)
 
 router.put('/:id', isLoggedIn, modifyBoard)
 

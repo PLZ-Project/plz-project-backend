@@ -1,8 +1,7 @@
-const { Op } = require('sequelize')
-const { Comment, User, Article } = require('@models/index')
+const { Comment, Article } = require('@models/index')
 
 const CommentCreateResponseDTO = require('@commentResponseDTO/commentCreateResponseDTO')
-const CommentReadResponseDTO = require('@commentResponseDTO/commentReadResponseDTO')
+const CommentListResponseDTO = require('@commentResponseDTO/commentListResponseDTO')
 const CommentUpdateResponseDTO = require('@commentResponseDTO/commentUpdateResponseDTO')
 const CommentDeleteResponseDTO = require('@commentResponseDTO/commentDeleteResponseDTO')
 
@@ -22,29 +21,22 @@ const commentDao = {
           reject(err)
         })
     }),
-  selectInfo: (responseTokenDTO, requestDTO) =>
+  selectList: () =>
     new Promise((resolve, reject) => {
-      Comment.findByPk(requestDTO.id, {
+      Comment.findAll({
         include: [
-          {
-            model: User,
-            as: 'User',
-            attributes: User.getIncludeAttributes()
-          },
           {
             model: Article,
             as: 'Article',
-            attributes: Article.getIncludeAttributes()
+            attributes: ['id']
           }
         ]
       })
         .then((selectedInfo) => {
-          const commentReadResponseDTO = new CommentReadResponseDTO({
-            responseTokenDTO,
-            ...selectedInfo.dataValues
-          })
+          const parsedData = JSON.parse(JSON.stringify(selectedInfo))
+          const commentListResponseDTO = new CommentListResponseDTO(parsedData)
 
-          resolve(commentReadResponseDTO)
+          resolve(commentListResponseDTO)
         })
         .catch((err) => {
           reject(err)

@@ -41,7 +41,7 @@ const boardService = {
       resolve(responseDTO)
     })
   },
-  info: async (req, requestDTO) => {
+  info: async (requestDTO) => {
     let responseDTO = null
 
     try {

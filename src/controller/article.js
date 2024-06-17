@@ -42,9 +42,6 @@ exports.searchArticle = async (req, res) => {
       req.query.searchType === 'author' &&
       (await superagent
         .get(`${envProvider.common.endPoint}:${envProvider.common.port}/api/user/getUsers/nickname`)
-        .set('accesstoken', req.headers.accesstoken)
-        .set('refreshtoken', req.headers.refreshtoken)
-        .set('Accept', 'application/json')
         .query(req.query)
         .send())
 
@@ -68,22 +65,36 @@ exports.getArticle = async (req, res) => {
 
     logger.info(`router/article.js.info.params: ${JSON.stringify(requestDTO)}`)
 
-    const responseDTO = await articleService.info(req, requestDTO)
+    const responseDTO = await articleService.info(requestDTO)
 
     logger.info(`router/article.js.info.result: ${JSON.stringify(responseDTO)}`)
 
     await superagent
       .put(
-        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/${responseDTO.id}`
+        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/modifyHit/${requestDTO.id}`
       )
-      .set('accesstoken', req.headers.accesstoken)
-      .set('refreshtoken', req.headers.refreshtoken)
-      .set('Accept', 'application/json')
       .send(responseDTO)
 
     res.status(200).json(responseDTO)
   } catch (err) {
     logger.error(`router/article.js.info.error: ${err.message.toString()}`)
+    res.status(500).json({ err: err.message.toString() })
+  }
+}
+exports.modifyArticleHit = async (req, res) => {
+  try {
+    const requestDTO = new ArticleUpdateRequestDTO({ ...req.body, ...req.params })
+
+    logger.info(`router/article.js.updateHit.params: ${JSON.stringify(requestDTO)}`)
+
+    const responseDTO = await articleService.edit(req, requestDTO)
+
+    logger.info(`router/article.js.updateHit.result: ${JSON.stringify(responseDTO)}`)
+
+    res.status(200).json(responseDTO)
+  } catch (err) {
+    logger.error(`router/article.js.updateHit.error: ${err.message.toString()}`)
+
     res.status(500).json({ err: err.message.toString() })
   }
 }

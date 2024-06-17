@@ -22,11 +22,11 @@ const commentService = {
       resolve(responseDTO)
     })
   },
-  info: async (req, requestDTO) => {
+  list: async () => {
     let responseDTO = null
 
     try {
-      responseDTO = await commentDao.selectInfo(req.responseTokenDTO, requestDTO)
+      responseDTO = await commentDao.selectList()
 
       logger.debug(`commentService.info: ${JSON.stringify(responseDTO)}`)
     } catch (err) {

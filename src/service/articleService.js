@@ -41,11 +41,11 @@ const articleService = {
       resolve(responseDTO)
     })
   },
-  info: async (req, requestDTO) => {
+  info: async (requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await articleDao.selectInfo(req.responseTokenDTO, requestDTO)
+      responseDTO = await articleDao.selectInfo(requestDTO)
 
       logger.debug(`articleService.info: ${JSON.stringify(responseDTO)}`)
     } catch (err) {

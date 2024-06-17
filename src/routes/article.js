@@ -8,6 +8,7 @@ const {
   createArticle,
   searchArticle,
   getArticle,
+  modifyArticleHit,
   modifyArticle,
   deleteArticle,
   deleteArticleForce,
@@ -23,7 +24,9 @@ router.post('/', isLoggedIn, createArticle)
 
 router.get('/search', searchArticle)
 
-router.get('/:id', isLoggedIn, getArticle)
+router.get('/:id', getArticle)
+
+router.put('/modifyHit/:id', modifyArticleHit)
 
 router.put('/:id', isLoggedIn, modifyArticle)
 

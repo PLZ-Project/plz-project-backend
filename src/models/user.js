@@ -61,7 +61,7 @@ module.exports = class User extends Sequelize.Model {
     })
 
     db.User.belongsToMany(db.Article, {
-      through: db.CommentNotification,
+      through: { model: db.CommentNotification, unique: false },
       foreignKey: 'userId',
       otherKey: 'articleId',
       as: 'commentNotifications'

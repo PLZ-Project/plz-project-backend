@@ -2,6 +2,7 @@ const { Op } = require('sequelize')
 const { Community, User, Board } = require('@models/index')
 
 const CommunityCreateResponseDTO = require('@communityResponseDTO/communityCreateResponseDTO')
+const CommunityListResponseDTO = require('@communityResponseDTO/communityListResponseDTO')
 const CommunityReadResponseDTO = require('@communityResponseDTO/communityReadResponseDTO')
 const CommunityUpdateResponseDTO = require('@communityResponseDTO/communityUpdateResponseDTO')
 const CommunityDeleteResponseDTO = require('@communityResponseDTO/communityDeleteResponseDTO')
@@ -66,7 +67,10 @@ const communityDao = {
         ]
       })
         .then((selectedList) => {
-          resolve(selectedList)
+          const parsedData = JSON.parse(JSON.stringify(selectedList))
+          const communityListResponseDTO = new CommunityListResponseDTO(parsedData)
+
+          resolve(communityListResponseDTO)
         })
         .catch((err) => {
           reject(err)

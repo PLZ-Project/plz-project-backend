@@ -4,7 +4,7 @@ const { isLoggedIn } = require('@middleware/middleware')
 
 const {
   createComment,
-  getComment,
+  getCommentList,
   modifyComment,
   deleteComment,
   deleteCommentForce
@@ -14,7 +14,7 @@ const router = express.Router()
 
 router.post('/', isLoggedIn, createComment)
 
-router.get('/:id', getComment)
+router.get('/list', getCommentList)
 
 router.put('/:id', isLoggedIn, modifyComment)
 

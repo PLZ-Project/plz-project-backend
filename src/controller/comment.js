@@ -37,9 +37,11 @@ exports.createComment = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-exports.getComment = async (req, res) => {
+exports.getCommentList = async (req, res) => {
   try {
-    const responseDTO = await commentService.info(req)
+    logger.info(`router/comment.js.info.params: None`)
+
+    const responseDTO = await commentService.list()
 
     logger.info(`router/comment.js.info.result: ${JSON.stringify(responseDTO)}`)
 

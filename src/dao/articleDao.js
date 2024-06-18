@@ -2,6 +2,7 @@ const { Op } = require('sequelize')
 const { Article, User, Board, Comment } = require('@models/index')
 
 const ArticleCreateResponseDTO = require('@articleResponseDTO/articleCreateResponseDTO')
+const ArticleListResponseDTO = require('@articleResponseDTO/articleListResponseDTO')
 const ArticleReadResponseDTO = require('@articleResponseDTO/articleReadResponseDTO')
 const ArticleUpdateResponseDTO = require('@articleResponseDTO/articleUpdateResponseDTO')
 const ArticleDeleteResponseDTO = require('@articleResponseDTO/articleDeleteResponseDTO')
@@ -105,14 +106,18 @@ const articleDao = {
         ]
       })
         .then((selectedList) => {
-          resolve(selectedList)
+          const parsedData = JSON.parse(JSON.stringify(selectedList))
+
+          const articleListResponseDTO = new ArticleListResponseDTO(parsedData)
+
+          resolve(articleListResponseDTO)
         })
         .catch((err) => {
           reject(err)
         })
     })
   },
-  selectInfo: (responseTokenDTO, requestDTO) =>
+  selectInfo: (requestDTO) =>
     new Promise((resolve, reject) => {
       Article.findByPk(requestDTO.id, {
         include: [
@@ -143,7 +148,6 @@ const articleDao = {
       })
         .then((selectedInfo) => {
           const articleReadResponseDTO = new ArticleReadResponseDTO({
-            responseTokenDTO,
             ...selectedInfo.dataValues
           })
 

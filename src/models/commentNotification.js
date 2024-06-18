@@ -4,6 +4,11 @@ module.exports = class CommentNotification extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
+        id: {
+          type: Sequelize.INTEGER,
+          primaryKey: true,
+          autoIncrement: true
+        },
         articleId: {
           type: Sequelize.INTEGER,
           allowNull: false

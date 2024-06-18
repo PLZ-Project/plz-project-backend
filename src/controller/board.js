@@ -39,9 +39,6 @@ exports.getList = async (req, res) => {
       req.query.searchType === 'author' &&
       (await superagent
         .get(`${envProvider.common.endPoint}:${envProvider.common.port}/api/user/getUsers/nickname`)
-        .set('accesstoken', req.headers.accesstoken)
-        .set('refreshtoken', req.headers.refreshtoken)
-        .set('Accept', 'application/json')
         .query(req.query)
         .send())
 

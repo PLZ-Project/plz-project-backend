@@ -27,10 +27,22 @@ const UserReadResponseDTO = require('@userResponseDTO/userReadResponseDTO')
 const app = express()
 const server = http.createServer(app)
 const io = socketIo(server)
+console.log('🚀 ~ io:', io)
 
 io.on('connection', (socket) => {
-  socket.on('comment', (data) => {
-    io.emit('newComment', data)
+  console.log('Client connected')
+
+  socket.on('newComment', (newComment) => {
+    // 여기서 newComment를 받아서 처리하고, 필요한 경우 다시 클라이언트에게 보내줄 수 있음
+    console.log('New comment:', newComment)
+    // 게시글 작성자에게만 알림을 보내는 예시
+    socket.broadcast.to(newComment.articleId).emit('commentNotification', {
+      message: `${newComment.author}님이 새로운 댓글을 달았습니다.`
+    })
+  })
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected')
   })
 })
 

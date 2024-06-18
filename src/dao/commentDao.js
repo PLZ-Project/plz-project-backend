@@ -21,16 +21,10 @@ const commentDao = {
           reject(err)
         })
     }),
-  selectList: () =>
+  selectList: (requestDTO) =>
     new Promise((resolve, reject) => {
-      Comment.findAll({
-        include: [
-          {
-            model: Article,
-            as: 'Article',
-            attributes: ['id']
-          }
-        ]
+      Comment.findAndCountAll({
+        where: { articleId: requestDTO.articleId }
       })
         .then((selectedInfo) => {
           const parsedData = JSON.parse(JSON.stringify(selectedInfo))

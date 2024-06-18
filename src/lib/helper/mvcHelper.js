@@ -30,13 +30,12 @@ const mvcHelper = {
           )
           .then((response) => JSON.parse(response.text))
 
-        if (req.body.id && user) {
+        if (req.body.id && Object.keys(user).length !== 0) {
           const taggedUser = await superagent
             .get(
               `${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/getTaggedNotify/${user.id}`
             )
             .then((response) => JSON.parse(response.text))
-
           if (
             Object.keys(taggedUser).length === 0 ||
             taggedUser.commentId !== Number(req.body.id)
@@ -48,15 +47,15 @@ const mvcHelper = {
                 commentId: Number(req.body.id)
               })
             )
+          } else {
+            parsedList.push(
+              new TagNotificationCreateRequestDTO({
+                userId: req.tokenUser.id,
+                targetId: user.id,
+                commentId: Number(req.body.id)
+              })
+            )
           }
-        } else {
-          parsedList.push(
-            new TagNotificationCreateRequestDTO({
-              userId: req.tokenUser.id,
-              targetId: user.id,
-              commentId: Number(req.body.id)
-            })
-          )
         }
       } catch (err) {
         throw new Error(err)

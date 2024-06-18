@@ -59,6 +59,7 @@
     "redis": "^4.6.14",
     "sequelize": "^6.37.3",
     "socket.io": "^4.7.5",
+    "socketio": "^1.0.0",
     "superagent": "^9.0.2",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0"

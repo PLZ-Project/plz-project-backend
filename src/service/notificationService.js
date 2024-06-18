@@ -60,11 +60,30 @@ const notificationService = {
       resolve(responseDTO)
     })
   },
+  regLike: async (requestDTO) => {
+    let responseDTO = null
+
+    try {
+      responseDTO = await notificationDao.insertLike(requestDTO)
+
+      logger.debug(`notificationService.reg : ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`notificationService.reg: ${err}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
   deleteTag: async (requestDTO) => {
     let responseDTO = null
 
     try {
-      responseDTO = await notificationDao.delete(requestDTO)
+      responseDTO = await notificationDao.deleteTag(requestDTO)
 
       logger.debug(`notificationService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -83,7 +102,26 @@ const notificationService = {
     let responseDTO = null
 
     try {
-      responseDTO = await notificationDao.delete(requestDTO)
+      responseDTO = await notificationDao.deleteComment(requestDTO)
+
+      logger.debug(`notificationService.delete: ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`notificationService.delete: ${err.message.toString()}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
+  deleteLike: async (requestDTO) => {
+    let responseDTO = null
+
+    try {
+      responseDTO = await notificationDao.deleteLike(requestDTO)
 
       logger.debug(`notificationService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -102,7 +140,7 @@ const notificationService = {
     let responseDTO = null
 
     try {
-      responseDTO = await notificationDao.deleteForce(requestDTO)
+      responseDTO = await notificationDao.deleteForceTag(requestDTO)
 
       logger.debug(`notificationService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {
@@ -121,7 +159,26 @@ const notificationService = {
     let responseDTO = null
 
     try {
-      responseDTO = await notificationDao.deleteForce(requestDTO)
+      responseDTO = await notificationDao.deleteForceComment(requestDTO)
+
+      logger.debug(`notificationService.delete: ${JSON.stringify(responseDTO)}`)
+    } catch (err) {
+      logger.error(`notificationService.delete: ${err.message.toString()}`)
+
+      return new Promise((resolve, reject) => {
+        reject(err)
+      })
+    }
+
+    return new Promise((resolve) => {
+      resolve(responseDTO)
+    })
+  },
+  deleteForceLike: async (requestDTO) => {
+    let responseDTO = null
+
+    try {
+      responseDTO = await notificationDao.deleteForceLike(requestDTO)
 
       logger.debug(`notificationService.delete: ${JSON.stringify(responseDTO)}`)
     } catch (err) {

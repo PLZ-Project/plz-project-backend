@@ -11,6 +11,7 @@ const CommentUpdateRequestDTO = require('@commentRequestDTO/commentUpdateRequest
 const CommentDeleteRequestDTO = require('@commentRequestDTO/commentDeleteRequestDTO')
 
 const { handleValidationError } = require('@helper/mvcHelper')
+const CommentReadRequestDTO = require('@commentRequestDTO/commentReadRequestDTO')
 
 exports.createComment = async (req, res) => {
   try {
@@ -41,7 +42,9 @@ exports.getCommentList = async (req, res) => {
   try {
     logger.info(`router/comment.js.info.params: None`)
 
-    const responseDTO = await commentService.list()
+    const requestDTO = new CommentReadRequestDTO({ ...req.params })
+
+    const responseDTO = await commentService.list(requestDTO)
 
     logger.info(`router/comment.js.info.result: ${JSON.stringify(responseDTO)}`)
 

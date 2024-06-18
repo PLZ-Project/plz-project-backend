@@ -4,7 +4,8 @@ const path = require('path')
 const express = require('express')
 const passport = require('passport')
 
-const cors = require('cors')
+const http = require('http')
+const socketIo = require('socket.io')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 
@@ -24,6 +25,14 @@ const UserCreateRequestDTO = require('@userRequestDTO/userCreateRequestDTO')
 const UserReadResponseDTO = require('@userResponseDTO/userReadResponseDTO')
 
 const app = express()
+const server = http.createServer(app)
+const io = socketIo(server)
+
+io.on('connection', (socket) => {
+  socket.on('comment', (data) => {
+    io.emit('newComment', data)
+  })
+})
 
 logger.info('app start')
 

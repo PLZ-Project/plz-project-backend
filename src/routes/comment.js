@@ -14,7 +14,7 @@ const router = express.Router()
 
 router.post('/', isLoggedIn, createComment)
 
-router.get('/list', getCommentList)
+router.get('/list/:id', getCommentList)
 
 router.put('/:id', isLoggedIn, modifyComment)
 

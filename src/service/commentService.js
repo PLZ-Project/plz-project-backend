@@ -23,7 +23,6 @@ const commentService = {
     })
   },
   list: async () => {
-  list: async (req) => {
     let responseDTO = null
 
     try {

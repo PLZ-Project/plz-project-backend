@@ -71,7 +71,7 @@ exports.getArticle = async (req, res) => {
 
     await superagent
       .put(
-        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/renewHit/modifyHit/${requestDTO.id}`
+        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/modifyHit/${requestDTO.id}`
       )
       .send(responseDTO)
 

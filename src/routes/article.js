@@ -28,9 +28,6 @@ router.get('/search', searchArticle)
 router.get('/:id', getArticle)
 
 router.put('/modifyHit/:id', modifyArticleHit)
-router.get('/:id', getArticle)
-
-router.put('/renewHit/:id', renewHitArticle)
 
 router.put('/:id', isLoggedIn, modifyArticle)
 

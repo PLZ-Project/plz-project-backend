@@ -27,7 +27,7 @@ router.post(
 
 router.get('/list', getList)
 
-router.get('/:id', isLoggedIn, getCommunity)
+router.get('/:id', getCommunity)
 
 router.put(
   '/:id',

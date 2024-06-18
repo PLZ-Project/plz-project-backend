@@ -13,6 +13,7 @@ exports.sendEmail = async (req, res) => {
     const verificationCode = emailService.generateVerificationCode()
 
     const sendRequestDTO = new SendRequestDTO({ ...req.body, verificationCode })
+    console.log('🚀 ~ exports.sendEmail= ~ sendRequestDTO:', sendRequestDTO)
     const verifyRequestDTO = new VerifyRequestDTO({ ...req.body, verificationCode })
 
     await emailService.sendEmail(sendRequestDTO, verifyRequestDTO)
@@ -38,7 +39,21 @@ exports.verify = async (req, res) => {
 
     logger.info(`router/email.js.update.result: ${JSON.stringify(responseDTO)}`)
 
-    res.status(200).json(responseDTO)
+    res.status(200).send(`
+        <html>
+          <head>
+              <title>API로 반환하는 HTML 페이지</title>
+              <script>
+                function closeWindow() {
+                    window.close();
+                }
+              </script>
+          </head>
+          <body>
+            <button onclick="closeWindow()">Close Window</button>
+          </body>
+        </html>
+    `)
   } catch (err) {
     logger.error(`router/email.js.error: ${err.message.toString()}`)
 

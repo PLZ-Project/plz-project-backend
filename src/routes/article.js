@@ -13,7 +13,8 @@ const {
   deleteArticle,
   deleteArticleForce,
   createArticleLike,
-  deleteArticleLike
+  deleteArticleLike,
+  renewHitArticle
 } = require('@controller/article')
 
 const { articleImageUpload } = require('@controller/image')

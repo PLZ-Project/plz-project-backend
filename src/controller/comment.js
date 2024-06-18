@@ -7,7 +7,6 @@ const envProvider = require('@lib/provider/envProvider')
 const commentService = require('@service/commentService')
 
 const CommentCreateRequestDTO = require('@commentRequestDTO/commentCreateRequestDTO')
-const CommentReadRequestDTO = require('@commentRequestDTO/commentReadRequestDTO')
 const CommentUpdateRequestDTO = require('@commentRequestDTO/commentUpdateRequestDTO')
 const CommentDeleteRequestDTO = require('@commentRequestDTO/commentDeleteRequestDTO')
 
@@ -40,11 +39,7 @@ exports.createComment = async (req, res) => {
 }
 exports.getComment = async (req, res) => {
   try {
-    const requestDTO = new CommentReadRequestDTO(req.params)
-
-    logger.info(`router/comment.js.info.params: ${JSON.stringify(requestDTO)}`)
-
-    const responseDTO = await commentService.info(req, requestDTO)
+    const responseDTO = await commentService.info(req)
 
     logger.info(`router/comment.js.info.result: ${JSON.stringify(responseDTO)}`)
 

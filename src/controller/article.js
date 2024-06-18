@@ -74,16 +74,31 @@ exports.getArticle = async (req, res) => {
 
     await superagent
       .put(
-        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/${responseDTO.id}`
+        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/renewHit/${responseDTO.id}`
       )
-      .set('accesstoken', req.headers.accesstoken)
-      .set('refreshtoken', req.headers.refreshtoken)
       .set('Accept', 'application/json')
       .send(responseDTO)
 
     res.status(200).json(responseDTO)
   } catch (err) {
     logger.error(`router/article.js.info.error: ${err.message.toString()}`)
+    res.status(500).json({ err: err.message.toString() })
+  }
+}
+exports.renewHitArticle = async (req, res) => {
+  try {
+    const requestDTO = new ArticleUpdateRequestDTO({ ...req.body, ...req.params })
+
+    logger.info(`router/article.js.renewHit.params: ${JSON.stringify(requestDTO)}`)
+
+    const responseDTO = await articleService.edit(req, requestDTO)
+
+    logger.info(`router/article.js.renewHit.result: ${JSON.stringify(responseDTO)}`)
+
+    res.status(200).json(responseDTO)
+  } catch (err) {
+    logger.error(`router/article.js.renewHit.error: ${err.message.toString()}`)
+
     res.status(500).json({ err: err.message.toString() })
   }
 }

@@ -22,19 +22,14 @@ const commentDao = {
           reject(err)
         })
     }),
-  selectInfo: (responseTokenDTO, requestDTO) =>
+  selectList: (responseTokenDTO) =>
     new Promise((resolve, reject) => {
-      Comment.findByPk(requestDTO.id, {
+      Comment.findAndCountAll({
         include: [
           {
             model: User,
             as: 'User',
             attributes: User.getIncludeAttributes()
-          },
-          {
-            model: Article,
-            as: 'Article',
-            attributes: Article.getIncludeAttributes()
           }
         ]
       })

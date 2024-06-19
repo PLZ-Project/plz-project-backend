@@ -17,7 +17,7 @@ module.exports = class Article extends Sequelize.Model {
           allowNull: false
         },
         content: {
-          type: Sequelize.TEXT,
+          type: Sequelize.JSON,
           allowNull: false
         },
         hit: {

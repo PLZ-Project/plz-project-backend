@@ -1,10 +1,11 @@
 require('module-alias/register')
 
+const fs = require('fs')
 const path = require('path')
 const express = require('express')
 const passport = require('passport')
 
-const http = require('http')
+const https = require('https')
 const socketIo = require('socket.io')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
@@ -25,26 +26,40 @@ const UserCreateRequestDTO = require('@userRequestDTO/userCreateRequestDTO')
 const UserReadResponseDTO = require('@userResponseDTO/userReadResponseDTO')
 
 const app = express()
-const server = http.createServer(app)
-const io = socketIo(server)
-console.log('🚀 ~ io:', io)
 
-io.on('connection', (socket) => {
-  console.log('Client connected')
+try {
+  const server = https.createServer(app)
 
-  socket.on('newComment', (newComment) => {
-    // 여기서 newComment를 받아서 처리하고, 필요한 경우 다시 클라이언트에게 보내줄 수 있음
-    console.log('New comment:', newComment)
-    // 게시글 작성자에게만 알림을 보내는 예시
-    socket.broadcast.to(newComment.articleId).emit('commentNotification', {
-      message: `${newComment.author}님이 새로운 댓글을 달았습니다.`
+  const io = socketIo(server)
+
+  io.on('connection', (socket) => {
+    console.log('Client connected')
+    socket.on('newComment', (newComment) => {
+      console.log('New comment:', newComment)
+      socket.broadcast.to(newComment.articleId).emit('commentNotification', {
+        message: `${newComment.author}님이 새로운 댓글을 달았습니다.`
+      })
+    })
+    socket.on('disconnect', () => {
+      console.log('Client disconnected')
+    })
+
+    server.on('error', (err) => {
+      try {
+        console.log('=======')
+        console.log(err)
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected')
     })
   })
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected')
-  })
-})
+} catch (err) {
+  console.log(err)
+}
 
 logger.info('app start')
 

@@ -1,5 +1,7 @@
 const logger = require('@lib/logger')
 
+const socketHelper = require('@helper/socketHelper')
+
 const notificationDao = require('@dao/notificationDao')
 
 const notificationService = {
@@ -46,6 +48,8 @@ const notificationService = {
 
     try {
       responseDTO = await notificationDao.insertComment(requestDTO)
+
+      socketHelper.io.emit('newComment', responseDTO)
 
       logger.debug(`notificationService.reg : ${JSON.stringify(responseDTO)}`)
     } catch (err) {

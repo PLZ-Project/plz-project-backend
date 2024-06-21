@@ -5,6 +5,7 @@ const { isLoggedIn } = require('@middleware/middleware')
 const {
   createCommentNotify,
   resendCommentNotify,
+  getNotify,
   getTaggedNotify
 } = require('@controller/notification')
 
@@ -14,7 +15,9 @@ router.post('/comment', isLoggedIn, createCommentNotify)
 
 router.post('/resendComment', isLoggedIn, resendCommentNotify)
 
-router.get('/getTaggedNotify/:targetId', getTaggedNotify)
+router.get('/:userId', getNotify)
+
+router.get('/taggedUser/:userId/:commentId', getTaggedNotify)
 
 router.post('/chat', async (req, res) => {
   // try {

@@ -1,6 +1,9 @@
+const superagent = require('superagent')
+
 const logger = require('@lib/logger')
 const hashManager = require('@lib/hashManager')
 const tokenManager = require('@lib/tokenManager')
+const envProvider = require('@lib/provider/envProvider')
 
 const userDao = require('@dao/userDao')
 
@@ -231,6 +234,16 @@ const userService = {
         throw new Error(
           `userService.login: 일치하는 유저정보가 없습니다 (email: ${JSON.stringify(requestDTO.email)})`
         )
+      }
+
+      const emailVerifyDTO = await superagent
+        .get(
+          `${envProvider.common.endPoint}:${envProvider.common.port}/api/email/${selectedUserInfo.id}`
+        )
+        .end()
+
+      if (emailVerifyDTO) {
+        throw new Error('이메일 인증이 되지 않았습니다.')
       }
 
       const checkPassword = await hashManager.checkPasswordHash(

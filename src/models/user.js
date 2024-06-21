@@ -52,33 +52,12 @@ module.exports = class User extends Sequelize.Model {
       foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'comments' }
     })
 
-    db.User.hasMany(db.TagNotification, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'createdTagNotifications' }
+    db.User.hasMany(db.User, {
+      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: '' }
     })
 
-    db.User.hasMany(db.TagNotification, {
-      foreignKey: { name: 'targetId', onDelete: 'CASCADE', as: 'receivedTagNotifications' }
-    })
-
-    db.User.belongsToMany(db.Article, {
-      through: { model: db.CommentNotification, unique: false },
-      foreignKey: 'userId',
-      otherKey: 'articleId',
-      as: 'commentNotifications'
-    })
-
-    db.User.belongsToMany(db.Article, {
-      through: { model: db.LikeNotification, unique: false },
-      foreignKey: 'userId',
-      otherKey: 'articleId',
-      as: 'LikeNotifications'
-    })
-
-    db.User.belongsToMany(db.Article, {
-      through: db.ArticleUserLikeJoin,
-      foreignKey: 'userId',
-      otherKey: 'articleId',
-      as: 'likeArticles'
+    db.User.hasMany(db.Notification, {
+      foreignKey: { name: 'targetId', onDelete: 'CASCADE', as: 'Notification' }
     })
   }
 

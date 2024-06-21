@@ -23,14 +23,20 @@ exports.createComment = async (req, res) => {
 
     const responseDTO = await commentService.reg(req, requestDTO)
 
+    const articleResponseDTO = await superagent
+      .get(
+        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/${req.body.articleId}`
+      )
+      .then((response) => JSON.parse(response.text))
+
     await superagent
       .post(`${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/comment`)
       .set('accesstoken', req.headers.accesstoken)
       .set('refreshtoken', req.headers.refreshtoken)
       .set('Accept', 'application/json')
-      .send({ ...responseDTO, articleId: req.body.articleId })
+      .send({ ...responseDTO, articleId: req.body.articleId, writerId: articleResponseDTO.user.id })
 
-    logger.info(`router/comment.js.reg.result: ${JSON.stringify(responseDTO)}`)
+    // logger.info(`router/comment.js.reg.result: ${JSON.stringify(responseDTO)}`)
 
     res.status(200).json(responseDTO)
   } catch (err) {

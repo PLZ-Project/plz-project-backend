@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const { User, Board, Community, Article, Comment } = require('@models/index')
+const { User, Board, Community, Article, Comment, Notification } = require('@models/index')
 
 const UserCreateResponseDTO = require('@userResponseDTO/userCreateResponseDTO')
 const UserReadResponseDTO = require('@userResponseDTO/userReadResponseDTO')

@@ -4,7 +4,6 @@ const superagent = require('superagent')
 
 const logger = require('@lib/logger')
 const envProvider = require('@provider/envProvider')
-const { transporter } = require('@lib/connection/connectors')
 
 const userService = require('./userService')
 
@@ -13,19 +12,21 @@ const emailDao = require('@dao/emailDao')
 const VerifyRequestDTO = require('@emailRequestDTO/verifyRequestDTO')
 const UserReadRequestDTO = require('@userRequestDTO/userReadRequestDTO')
 
+const { transporter } = require('@lib/connection/connectors')
+
 const emailService = {
   sendEmail: async (sendRequestDTO, createVerifyRequestDTO) => {
     try {
       emailDao.insert(createVerifyRequestDTO)
+
       await transporter.sendMail({ ...sendRequestDTO })
 
       logger.debug(`emailService.sendEmail: 인증번호 전송 완료!! (email: ${sendRequestDTO.to})`)
     } catch (err) {
-      logger.error(`emailService.sendEmail: ${err.message.toString()}`)
-
-      return new Promise((resolve, reject) => {
-        reject(err)
-      })
+      logger.error(
+        `emailService.sendEmail: ${err.message ? err.message.toString() : 'Unknown error'}`
+      )
+      throw err
     }
   },
   checkVerifyCode: async (verifyRequestDTO) => {
@@ -42,11 +43,10 @@ const emailService = {
 
       logger.debug(`emailService.checkVerifyCode: ${JSON.stringify(emailResponseDTO)}`)
     } catch (err) {
-      logger.error(`emailService.checkVerifyCode: ${err.message.toString()}`)
-
-      return new Promise((resolve, reject) => {
-        reject(err)
-      })
+      logger.error(
+        `emailService.checkVerifyCode: ${err.message ? err.message.toString() : 'Unknown error'}`
+      )
+      throw err
     }
   },
   deleteVerifyData: async (verifyRequestDTO) => {
@@ -57,28 +57,31 @@ const emailService = {
 
       return responseDTO
     } catch (err) {
-      logger.error(`emailService.deleteVerifyData: ${err.message.toString()}`)
+      logger.error(
+        `emailService.deleteVerifyData: ${err.message ? err.message.toString() : 'Unknown error'}`
+      )
 
-      return new Promise((resolve, reject) => {
-        reject(err)
-      })
+      throw err
     }
   },
   generateVerificationCode: () => {
     const codeSize = 8
+
     const bytes = crypto.randomBytes(codeSize)
     const verificationCode = bytes.toString('base64').slice(0, codeSize).replaceAll('/', '0')
 
     return verificationCode
   },
   checkCondition: async (requestData, dbData, userDTO) => {
+    console.log('🚀 ~ checkCondition: ~ dbData:', dbData)
     try {
       if (
         !(dbData.id && dbData.userId && dbData.verificationCode) ||
         requestData.verificationCode !== dbData.verificationCode
       ) {
-        dbData.verificationCode &&
+        if (dbData.verificationCode) {
           emailDao.deleteForce(new VerifyRequestDTO({ verificationCode: dbData.verificationCode }))
+        }
 
         await superagent
           .post(`${envProvider.common.endPoint}:${envProvider.common.port}/api/email/sendEmail`)
@@ -87,11 +90,26 @@ const emailService = {
         throw new Error(`emailService.checkCondition: 인증 코드가 유효하지 않습니다.`)
       }
     } catch (err) {
-      logger.error(`emailService.checkCondition: ${err.message.toString()}`)
+      logger.error(
+        `emailService.checkCondition: ${err.message ? err.message.toString() : 'Unknown error'}`
+      )
 
-      return new Promise((resolve, reject) => {
-        reject(err)
-      })
+      throw err
+    }
+  },
+  getEmailVerify: async (requestDTO) => {
+    try {
+      const responseDTO = await emailDao.selectInfo(requestDTO)
+
+      logger.debug(`emailService.getEmailVerify: ${JSON.stringify(responseDTO)}`)
+
+      return responseDTO
+    } catch (err) {
+      logger.error(
+        `emailService.getEmailVerify: ${err.message ? err.message.toString() : 'Unknown error'}`
+      )
+
+      throw err
     }
   }
 }

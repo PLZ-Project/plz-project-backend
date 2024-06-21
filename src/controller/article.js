@@ -69,12 +69,6 @@ exports.getArticle = async (req, res) => {
 
     logger.info(`router/article.js.info.result: ${JSON.stringify(responseDTO)}`)
 
-    await superagent
-      .put(
-        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/modifyHit/${requestDTO.id}`
-      )
-      .send(responseDTO)
-
     res.status(200).json(responseDTO)
   } catch (err) {
     logger.error(`router/article.js.info.error: ${err.message.toString()}`)

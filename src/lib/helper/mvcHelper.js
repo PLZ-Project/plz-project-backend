@@ -6,7 +6,7 @@ const multer = require('multer')
 
 const envProvider = require('@lib/provider/envProvider')
 
-const TagNotificationCreateRequestDTO = require('@notificationRequestDTO/tagNotificationCreateRequestDTO')
+const NotificationCreateRequestDTO = require('@notificationRequestDTO/notificationCreateRequestDTO')
 
 const mvcHelper = {
   handleValidationError: (params) => {
@@ -33,7 +33,7 @@ const mvcHelper = {
         if (req.body.id && Object.keys(user).length !== 0) {
           const taggedUser = await superagent
             .get(
-              `${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/getTaggedNotify/${user.id}`
+              `${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/taggedUser/${user.id}/${req.body.id}`
             )
             .then((response) => JSON.parse(response.text))
           if (
@@ -41,18 +41,22 @@ const mvcHelper = {
             taggedUser.commentId !== Number(req.body.id)
           ) {
             parsedList.push(
-              new TagNotificationCreateRequestDTO({
+              new NotificationCreateRequestDTO({
+                type: 'tag',
                 userId: req.tokenUser.id,
                 targetId: user.id,
-                commentId: Number(req.body.id)
+                articleId: req.body.articleId,
+                commentId: req.body.id
               })
             )
           } else {
             parsedList.push(
-              new TagNotificationCreateRequestDTO({
+              new NotificationCreateRequestDTO({
+                type: 'tag',
                 userId: req.tokenUser.id,
                 targetId: user.id,
-                commentId: Number(req.body.id)
+                articleId: req.body.articleId,
+                commentId: req.body.id
               })
             )
           }

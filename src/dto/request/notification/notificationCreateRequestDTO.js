@@ -1,18 +1,21 @@
-class TagNotificationCreateResponseDTO {
-  isRead
+class NotificationCreateRequestDTO {
+  type
 
   userId
 
   targetId
 
+  articleId
+
   commentId
 
   constructor(data) {
-    this.isRead = data?.isRead
+    this.type = data?.type
     this.userId = data?.userId
     this.targetId = data?.targetId
+    this.articleId = data?.articleId
     this.commentId = data?.commentId
   }
 }
 
-module.exports = TagNotificationCreateResponseDTO
+module.exports = NotificationCreateRequestDTO

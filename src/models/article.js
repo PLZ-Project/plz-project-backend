@@ -37,28 +37,19 @@ module.exports = class Article extends Sequelize.Model {
   }
 
   static associate(db) {
+    db.Article.hasMany(db.Comment, {
+      foreignKey: { name: 'articleId', onDelete: 'CASCADE', as: 'Comments' }
+    })
+
+    db.Article.hasMany(db.Notification, {
+      foreignKey: { name: 'articleId', onDelete: 'CASCADE', as: 'notifications' }
+    })
+
     db.Article.belongsTo(db.User, {
       foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'User' }
     })
     db.Article.belongsTo(db.Board, {
       foreignKey: { name: 'boardId', onDelete: 'CASCADE', as: 'Board' }
-    })
-    db.Article.hasMany(db.Comment, {
-      foreignKey: { name: 'articleId', onDelete: 'CASCADE', as: 'Comments' }
-    })
-
-    db.Article.belongsToMany(db.User, {
-      through: { model: db.CommentNotification, unique: false },
-      foreignKey: 'articleId',
-      otherKey: 'userId',
-      as: 'CommentUerList'
-    })
-
-    db.Article.belongsToMany(db.User, {
-      through: { model: db.LikeNotification, unique: false },
-      foreignKey: 'articleId',
-      otherKey: 'userId',
-      as: 'LikeUserList'
     })
 
     db.Article.belongsToMany(db.User, {

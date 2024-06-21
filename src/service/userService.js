@@ -240,7 +240,7 @@ const userService = {
         .get(
           `${envProvider.common.endPoint}:${envProvider.common.port}/api/email/${selectedUserInfo.id}`
         )
-        .send()
+        .end()
 
       if (emailVerifyDTO) {
         throw new Error('이메일 인증이 되지 않았습니다.')

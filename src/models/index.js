@@ -5,9 +5,7 @@ const Board = require('./board')
 const Article = require('./article')
 const Comment = require('./comment')
 const Community = require('./community')
-const TagNotification = require('./tagNotification')
-const LikeNotification = require('./likeNotification')
-const CommentNotification = require('./commentNotification')
+const Notification = require('./notification')
 const EmailVerification = require('./emailVerification')
 const ArticleUserLikeJoin = require('./articleUserLikeJoin')
 
@@ -20,9 +18,7 @@ db.Board = Board
 db.Article = Article
 db.Comment = Comment
 db.Community = Community
-db.TagNotification = TagNotification
-db.LikeNotification = LikeNotification
-db.CommentNotification = CommentNotification
+db.Notification = Notification
 db.EmailVerification = EmailVerification
 db.ArticleUserLikeJoin = ArticleUserLikeJoin
 

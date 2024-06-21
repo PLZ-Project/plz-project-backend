@@ -1,19 +1,16 @@
-const { TagNotification, CommentNotification } = require('@models/index')
+const { Notification, User, Article } = require('@models/index')
 
-const TagNotificationCreateResponseDTO = require('@notificationResponseDTO/tagNotificationCreateResponseDTO')
-const TagNotificationDeleteResponseDTO = require('@notificationResponseDTO/tagNotificationDeleteResponseDTO')
-
-const CommentNotificationCreateResponseDTO = require('@notificationResponseDTO/commentNotificationCreateResponseDTO')
-const CommentNotificationDeleteResponseDTO = require('@notificationResponseDTO/commentNotificationDeleteResponseDTO')
-const LikeNotificationCreateResponseDTO = require('@notificationResponseDTO/likeNotificationCreateResponseDTO')
-const LikeNotificationDeleteResponseDTO = require('@notificationRequestDTO/likeNotificationDeleteRequestDTO')
+const NotificationCreateResponseDTO = require('@notificationResponseDTO/notificationCreateResponseDTO')
+const NotificationListResponseDTO = require('@notificationResponseDTO/notificationListResponseDTO')
+const NotificationReadResponseDTO = require('@notificationResponseDTO/notificationReadResponseDTO')
+const NotificationDeleteResponseDTO = require('@notificationResponseDTO/notificationDeleteResponseDTO')
 
 const notificationDao = {
-  insertTag: (requestDTO) =>
+  insert: (requestDTO) =>
     new Promise((resolve, reject) => {
-      TagNotification.create(requestDTO)
+      Notification.create(requestDTO)
         .then((inserted) => {
-          const notificationCreateResponseDTO = new TagNotificationCreateResponseDTO(inserted)
+          const notificationCreateResponseDTO = new NotificationCreateResponseDTO(inserted)
 
           resolve(notificationCreateResponseDTO)
         })
@@ -21,135 +18,66 @@ const notificationDao = {
           reject(err)
         })
     }),
-  getTag: (requestDTO) =>
+  getList: (requestDTO) =>
     new Promise((resolve, reject) => {
-      TagNotification.findOne({
-        where: { targetId: requestDTO.targetId },
-        attributes: { exclude: ['password'] }
+      Notification.findAll({
+        where: { userId: requestDTO.userId },
+        include: [
+          {
+            model: Article,
+            as: 'Article',
+            attributes: Article.getIncludeAttributes()
+          }
+        ]
       })
         .then((selectedInfo) => {
-          const tagNotificationCreateResponseDTO = new TagNotificationCreateResponseDTO(
-            selectedInfo
-          )
+          const parsedData = JSON.parse(JSON.stringify(selectedInfo))
+          const notificationListResponseDTO = new NotificationListResponseDTO(parsedData)
 
-          resolve(tagNotificationCreateResponseDTO)
+          resolve(notificationListResponseDTO)
         })
         .catch((err) => {
           reject(err)
         })
     }),
-  insertComment: (requestDTO) =>
+  getTaggedNotify: (requestDTO) =>
     new Promise((resolve, reject) => {
-      CommentNotification.create(requestDTO)
-        .then((inserted) => {
-          const notificationCreateResponseDTO = new CommentNotificationCreateResponseDTO(inserted)
+      Notification.findOne({
+        where: { type: 'tag', targetId: requestDTO.targetId, commentId: requestDTO.commentId }
+      })
+        .then((selectedInfo) => {
+          const notificationReadResponseDTO = new NotificationReadResponseDTO(selectedInfo)
 
-          resolve(notificationCreateResponseDTO)
+          resolve(notificationReadResponseDTO)
         })
         .catch((err) => {
           reject(err)
         })
     }),
-  insertLike: (requestDTO) =>
+  delete: (requestDTO) =>
     new Promise((resolve, reject) => {
-      CommentNotification.create(requestDTO)
-        .then((inserted) => {
-          const notificationCreateResponseDTO = new LikeNotificationCreateResponseDTO(inserted)
-
-          resolve(notificationCreateResponseDTO)
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    }),
-  deleteTag: (requestDTO) =>
-    new Promise((resolve, reject) => {
-      TagNotification.destroy({
+      Notification.destroy({
         where: { id: requestDTO.id }
       })
         .then((deleted) => {
-          const tagNotificationDeleteResponseDTO = new TagNotificationDeleteResponseDTO({ deleted })
+          const notificationDeleteResponseDTO = new NotificationDeleteResponseDTO({ deleted })
 
-          resolve(tagNotificationDeleteResponseDTO)
+          resolve(notificationDeleteResponseDTO)
         })
         .catch((err) => {
           reject(err)
         })
     }),
-  deleteForceTag: (requestDTO) =>
+  deleteForce: (requestDTO) =>
     new Promise((resolve, reject) => {
-      TagNotification.destroy({
+      Notification.destroy({
         where: { id: requestDTO.id },
         force: true
       })
         .then((deleted) => {
-          const tagNotificationDeleteResponseDTO = new TagNotificationDeleteResponseDTO({ deleted })
+          const notificationDeleteResponseDTO = new NotificationDeleteResponseDTO({ deleted })
 
-          resolve(tagNotificationDeleteResponseDTO)
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    }),
-  deleteComment: (requestDTO) =>
-    new Promise((resolve, reject) => {
-      CommentNotification.destroy({
-        where: { id: requestDTO.id }
-      })
-        .then((deleted) => {
-          const commentNotificationDeleteResponseDTO = new CommentNotificationDeleteResponseDTO({
-            deleted
-          })
-
-          resolve(commentNotificationDeleteResponseDTO)
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    }),
-  deleteForceComment: (requestDTO) =>
-    new Promise((resolve, reject) => {
-      CommentNotification.destroy({
-        where: { id: requestDTO.id },
-        force: true
-      })
-        .then((deleted) => {
-          const commentNotificationDeleteResponseDTO = new CommentNotificationDeleteResponseDTO({
-            deleted
-          })
-
-          resolve(commentNotificationDeleteResponseDTO)
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    }),
-  deleteLike: (requestDTO) =>
-    new Promise((resolve, reject) => {
-      TagNotification.destroy({
-        where: { id: requestDTO.id }
-      })
-        .then((deleted) => {
-          const tagNotificationDeleteResponseDTO = new LikeNotificationDeleteResponseDTO({
-            deleted
-          })
-
-          resolve(tagNotificationDeleteResponseDTO)
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    }),
-  deleteForceLike: (requestDTO) =>
-    new Promise((resolve, reject) => {
-      TagNotification.destroy({
-        where: { id: requestDTO.id },
-        force: true
-      })
-        .then((deleted) => {
-          const tagNotificationDeleteResponseDTO = new TagNotificationDeleteResponseDTO({ deleted })
-
-          resolve(tagNotificationDeleteResponseDTO)
+          resolve(notificationDeleteResponseDTO)
         })
         .catch((err) => {
           reject(err)

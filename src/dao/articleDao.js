@@ -26,7 +26,7 @@ const articleDao = {
   selectList(requestDTO) {
     const setQuery = {}
 
-    if (requestDTO.boardId) {
+    if (requestDTO.boardId && requestDTO.boardId !== 'undefined') {
       setQuery.where = {
         ...setQuery.where,
         boardId: requestDTO.boardId
@@ -147,9 +147,8 @@ const articleDao = {
         ]
       })
         .then((selectedInfo) => {
-          const articleReadResponseDTO = new ArticleReadResponseDTO({
-            ...selectedInfo.dataValues
-          })
+          const parsedData = JSON.parse(JSON.stringify(selectedInfo))
+          const articleReadResponseDTO = new ArticleReadResponseDTO(parsedData)
 
           resolve(articleReadResponseDTO)
         })

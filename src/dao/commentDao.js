@@ -1,4 +1,4 @@
-const { Comment, Article } = require('@models/index')
+const { Comment, Article, User } = require('@models/index')
 
 const CommentCreateResponseDTO = require('@commentResponseDTO/commentCreateResponseDTO')
 const CommentListResponseDTO = require('@commentResponseDTO/commentListResponseDTO')
@@ -24,7 +24,14 @@ const commentDao = {
   selectList: (requestDTO) =>
     new Promise((resolve, reject) => {
       Comment.findAndCountAll({
-        where: { articleId: requestDTO.articleId }
+        where: { articleId: requestDTO.articleId },
+        include: [
+          {
+            model: User,
+            as: 'User',
+            attributes: User.getIncludeAttributes()
+          }
+        ]
       })
         .then((selectedInfo) => {
           const parsedData = JSON.parse(JSON.stringify(selectedInfo))

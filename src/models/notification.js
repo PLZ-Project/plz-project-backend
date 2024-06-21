@@ -1,9 +1,17 @@
 const Sequelize = require('sequelize')
 
-module.exports = class TagNotification extends Sequelize.Model {
+module.exports = class Notification extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
+        type: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
+        articleId: {
+          type: Sequelize.INTEGER,
+          allowNull: false
+        },
         commentId: {
           type: Sequelize.INTEGER,
           allowNull: false
@@ -15,11 +23,6 @@ module.exports = class TagNotification extends Sequelize.Model {
         targetId: {
           type: Sequelize.INTEGER,
           allowNull: false
-        },
-        isRead: {
-          type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: false
         }
       },
       {
@@ -27,39 +30,40 @@ module.exports = class TagNotification extends Sequelize.Model {
         freezeTableName: true,
         underscored: true,
         timestamps: true,
-        paranoid: true,
-        indexes: [
-          {
-            unique: true,
-            fields: ['comment_id', 'user_id', 'target_id']
-          }
-        ]
+        paranoid: true
       }
     )
   }
 
   static associate(db) {
-    db.TagNotification.belongsTo(db.User, {
+    db.Notification.belongsTo(db.Article, {
       foreignKey: {
-        name: 'userId',
+        name: 'articleId',
         onDelete: 'CASCADE',
-        as: 'creatorUser'
+        as: 'article'
       }
     })
 
-    db.TagNotification.belongsTo(db.User, {
-      foreignKey: {
-        name: 'targetId',
-        onDelete: 'CASCADE',
-        as: 'targetUser'
-      }
-    })
-
-    db.TagNotification.belongsTo(db.Comment, {
+    db.Notification.belongsTo(db.Comment, {
       foreignKey: {
         name: 'commentId',
         onDelete: 'CASCADE',
         as: 'comment'
+      }
+    })
+
+    db.Notification.belongsTo(db.User, {
+      foreignKey: {
+        name: 'userId',
+        onDelete: 'CASCADE',
+        as: 'User'
+      }
+    })
+
+    db.Notification.belongsTo(db.User, {
+      foreignKey: {
+        name: 'targetId',
+        onDelete: 'CASCADE'
       }
     })
   }

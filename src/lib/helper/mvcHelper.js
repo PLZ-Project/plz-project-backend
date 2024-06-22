@@ -36,6 +36,7 @@ const mvcHelper = {
               `${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/taggedUser/${user.id}/${req.body.id}`
             )
             .then((response) => JSON.parse(response.text))
+
           if (
             Object.keys(taggedUser).length === 0 ||
             taggedUser.commentId !== Number(req.body.id)

@@ -14,7 +14,7 @@ module.exports = class Notification extends Sequelize.Model {
         },
         commentId: {
           type: Sequelize.INTEGER,
-          allowNull: false
+          allowNull: true
         },
         userId: {
           type: Sequelize.INTEGER,

@@ -139,10 +139,7 @@ const articleDao = {
           {
             model: User,
             as: 'Likes',
-            attributes: User.getIncludeAttributes(),
-            through: {
-              attributes: []
-            }
+            attributes: User.getIncludeAttributes()
           }
         ]
       })

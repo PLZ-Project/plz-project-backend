@@ -22,25 +22,6 @@ const notificationService = {
       resolve(responseDTO)
     })
   },
-  regLikeNotify: async (requestDTO) => {
-    let responseDTO = null
-
-    try {
-      responseDTO = await notificationDao.insertLike(requestDTO)
-
-      logger.debug(`notificationService.reg : ${JSON.stringify(responseDTO)}`)
-    } catch (err) {
-      logger.error(`notificationService.reg: ${err}`)
-
-      return new Promise((resolve, reject) => {
-        reject(err)
-      })
-    }
-
-    return new Promise((resolve) => {
-      resolve(responseDTO)
-    })
-  },
   getNotify: async (requestDTO) => {
     let responseDTO = null
 

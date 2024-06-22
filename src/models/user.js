@@ -52,10 +52,6 @@ module.exports = class User extends Sequelize.Model {
       foreignKey: { name: 'userId', onDelete: 'CASCADE', as: 'comments' }
     })
 
-    db.User.hasMany(db.User, {
-      foreignKey: { name: 'userId', onDelete: 'CASCADE', as: '' }
-    })
-
     db.User.hasMany(db.Notification, {
       foreignKey: { name: 'targetId', onDelete: 'CASCADE', as: 'Notification' }
     })

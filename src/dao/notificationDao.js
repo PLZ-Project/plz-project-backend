@@ -21,7 +21,7 @@ const notificationDao = {
   getList: (requestDTO) =>
     new Promise((resolve, reject) => {
       Notification.findAll({
-        where: { userId: requestDTO.userId },
+        where: { targetId: requestDTO.userId },
         include: [
           {
             model: Article,

@@ -236,8 +236,8 @@ pipeline {
                     def nextEnv = envStatus == 'blue' ? 'green' : 'blue'
                     def nextDevEnv = envStatus == 'blue' ? 'greenDev' : 'blueDev'
 
-                    def port = envStatus == 'blue' ? 3000 : 3001
-                    def devPort = envStatus == 'blue' ? 3004 : 3005
+                    def port = envStatus == 'blue' ? 3001 : 3000
+                    def devPort = envStatus == 'blue' ? 3005 : 3004
 
                     def existedEnv = branch == 'main' ? currentEnv : currentDevEnv
                     def renewEnv = branch == 'main' ? nextEnv : nextDevEnv

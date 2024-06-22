@@ -148,6 +148,13 @@ exports.createArticleLike = async (req, res) => {
 
     handleValidationError(requestDTO)
 
+    await superagent
+      .post(`${envProvider.common.endPoint}:${envProvider.common.port}/api/notification/like`)
+      .set('accesstoken', req.headers.accesstoken)
+      .set('refreshtoken', req.headers.refreshtoken)
+      .set('Accept', 'application/json')
+      .send(requestDTO)
+
     logger.info(`router/article.js ${{ reqParams: JSON.stringify(requestDTO) }}`)
 
     const responseDTO = await articleService.regLike(req, requestDTO)

@@ -61,7 +61,7 @@ pipeline {
                         }
                     } 
                     
-                    if (branch == 'main' && env.BLUE_GREEN_STATE != 'blue') {
+                    if (branch == 'main' && env.BLUE_GREEN_STATE != '' && env.BLUE_GREEN_STATE != 'blue') {
                         portValue = '3001'
                     }
 

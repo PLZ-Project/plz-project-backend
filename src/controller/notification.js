@@ -1,4 +1,8 @@
+const superagent = require('superagent')
+
 const logger = require('@lib/logger')
+const io = require('@lib/helper/socketHelper')
+const envProvider = require('@lib/provider/envProvider')
 
 const notificationService = require('@service/notificationService')
 
@@ -12,15 +16,15 @@ exports.createCommentNotify = async (req, res) => {
   try {
     const tagRequestDTOList = await parseTaggedUsers(req)
 
-    logger.info(`router/notification.tag.js ${JSON.stringify({ reqParams: tagRequestDTOList })}`)
+    const tagResponseDTOList = await Promise.all(
+      tagRequestDTOList.map(async (tagRequestDTO) => {
+        const tagResponseDTO = await notificationService.regNotify(tagRequestDTO)
 
-    const tagNotificationResponseDTOList = tagRequestDTOList.map(async (requestDTO) => {
-      const tagNotificationResponseDTO = await notificationService.regNotify(requestDTO)
+        io.emitToUser(tagResponseDTO.targetId, 'new_notification', tagResponseDTO)
 
-      return tagNotificationResponseDTO
-    })
-
-    logger.info(`router/notification.js.result: ${JSON.stringify(tagNotificationResponseDTOList)}`)
+        return tagResponseDTO
+      })
+    )
 
     const commentRequestDTO = new NotificationCreateRequestDTO({
       type: 'comment',
@@ -30,22 +34,15 @@ exports.createCommentNotify = async (req, res) => {
       commentId: req.body.id
     })
 
-    logger.info(
-      `router/notification.comment.js ${JSON.stringify({ reqParams: commentRequestDTO })}`
-    )
+    const commentResponseDTO = await notificationService.regNotify(commentRequestDTO)
 
-    const commentNotificationResponseDTO = await notificationService.regNotify(commentRequestDTO)
+    io.emitToUser(commentRequestDTO.targetId, 'new_notification', commentResponseDTO)
 
-    logger.info(`router/notification.js.result: ${JSON.stringify(commentNotificationResponseDTO)}`)
-
-    res.status(200).json({ tagNotificationResponseDTOList, commentNotificationResponseDTO })
+    res.status(200).json({ tagResponseDTOList, commentResponseDTO })
   } catch (err) {
-    logger.error(`router/notification.js.error: ${err.message.toString()}`)
-
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.getNotify = async (req, res) => {
   try {
     const notificationReadRequestDTO = new NotificationListRequestDTO(req.params)
@@ -61,7 +58,6 @@ exports.getNotify = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.getTaggedNotify = async (req, res) => {
   try {
     const notificationReadRequestDTO = new NotificationReadRequestDTO(req.params)
@@ -77,7 +73,6 @@ exports.getTaggedNotify = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.resendCommentNotify = async (req, res) => {
   try {
     const tagRequestDTOList = await parseTaggedUsers(req)
@@ -99,17 +94,24 @@ exports.resendCommentNotify = async (req, res) => {
     res.status(500).json({ err: err.message.toString() })
   }
 }
-
 exports.createLikeNotify = async (req, res) => {
   try {
+    const articleResponseDTO = await superagent
+      .get(
+        `${envProvider.common.endPoint}:${envProvider.common.port}/api/article/${req.body.articleId}`
+      )
+      .then((response) => JSON.parse(response.text))
+
     const likeRequestDTO = new NotificationCreateRequestDTO({
+      type: 'like',
       userId: req.tokenUser.id,
+      targetId: articleResponseDTO.user.id,
       articleId: req.body.articleId
     })
 
     logger.info(`router/notification.comment.js ${JSON.stringify({ reqParams: likeRequestDTO })}`)
 
-    const likeNotificationResponseDTO = await notificationService.regLIke(likeRequestDTO)
+    const likeNotificationResponseDTO = await notificationService.regNotify(likeRequestDTO)
 
     logger.info(`router/notification.js.result: ${JSON.stringify(likeNotificationResponseDTO)}`)
 

@@ -43,6 +43,11 @@ const envProvider = {
   google: {
     callbackUrl: process.env.GOOGLE_LOGIN_CALLBACK_URL
   },
+  discord: {
+    clientId: process.env.DISCORD_OAUTH_CLIENT_ID,
+    clientSecret: process.env.DISCORD_OAUTH_CLIENT_SECRET,
+    callbackUrl: process.env.DISCORD_OAUTH_CALLBACK_URL
+  },
   session: {
     secretKey: process.env.SESSION_SECRET
   }

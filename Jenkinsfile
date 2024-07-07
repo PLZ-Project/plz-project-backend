@@ -27,7 +27,7 @@ pipeline {
                 script {
                     checkout([$class: 'GitSCM', branches: [[name: "*/${env.BRANCH_NAME}"]],
                         doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
-                        userRemoteConfigs: [[url: 'https://github.com/UVC-Midterm-Project/uvc-midterm-project-backend.git',
+                        userRemoteConfigs: [[url: 'https://github.com/plz-Project/plz-project-backend.git',
                         credentialsId: GITHUB_CREDENTIALS]]])
 
                     def blueGreenState = env.BRANCH_NAME == 'main' ? 
